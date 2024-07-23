@@ -9,19 +9,21 @@ import {Separator} from "@/components/ui/separator";
 import {useUser} from "@/store/user.ts";
 import GoogleIcon from "@/components/icons/GoogleIcon.vue";
 import GithubIcon from "@/components/icons/GithubIcon.vue";
+import {LoaderCircleIcon} from "lucide-vue-next";
 
 const formSchema = toTypedSchema(z.object({
   email: z.string().min(1).email(),
   password: z.string().min(1)
 }))
 
-const {handleSubmit} = useForm({
+const {handleSubmit, isSubmitting} = useForm({
   validationSchema: formSchema
 })
 
+const userStore = useUser()
+
 const onSubmit = handleSubmit( async (values) => {
-  const userStore = useUser()
-  userStore.signIn(values)
+  await userStore.signIn(values)
 })
 </script>
 
@@ -44,7 +46,7 @@ const onSubmit = handleSubmit( async (values) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="email@example.com" v-bind="componentField"/>
+                <Input :disabled="isSubmitting" type="email" placeholder="email@example.com" v-bind="componentField"/>
               </FormControl>
               <FormMessage/>
             </FormItem>
@@ -53,14 +55,15 @@ const onSubmit = handleSubmit( async (values) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="********" v-bind="componentField"/>
+                <Input :disabled="isSubmitting" type="password" placeholder="********" v-bind="componentField"/>
               </FormControl>
               <FormMessage/>
             </FormItem>
           </FormField>
 
-          <Button type="submit" class="w-full">
-            Sign In
+          <Button :disabled="isSubmitting" type="submit" class="w-full">
+            <LoaderCircleIcon v-if="isSubmitting" class="size-4 animate-spin"/>
+            <template v-else>Sign In</template>
           </Button>
         </form>
 
@@ -72,11 +75,11 @@ const onSubmit = handleSubmit( async (values) => {
         <Separator class="my-8" label="OR" />
 
         <div class="flex gap-4">
-          <Button class="flex-1" variant="outline" size="lg">
+          <Button @click="userStore.googleSignIn()" class="flex-1" variant="outline" size="lg">
             <GoogleIcon class="size-4 mr-2"/>
             Google
           </Button>
-          <Button class="flex-1" variant="outline" size="lg">
+          <Button @click="userStore.githubSignIn()" class="flex-1" variant="outline" size="lg">
             <GithubIcon class="size-4 mr-2"/>
             Github
           </Button>

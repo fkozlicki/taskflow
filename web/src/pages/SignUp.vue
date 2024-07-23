@@ -7,11 +7,12 @@ import {Input} from "@/components/ui/input";
 import {toTypedSchema} from "@vee-validate/zod";
 import {z} from "zod";
 import {useForm} from "vee-validate";
-import {useFetch} from "@/utils/useFetch";
 import {ref} from "vue";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import GoogleIcon from "@/components/icons/GoogleIcon.vue";
 import GithubIcon from "@/components/icons/GithubIcon.vue";
+import {LoaderCircleIcon} from 'lucide-vue-next'
+import {useUser} from "@/store/user.ts";
 
 const formSchema = toTypedSchema(z.object({
   email: z.string().min(1).email(),
@@ -21,21 +22,13 @@ const formSchema = toTypedSchema(z.object({
 
 const accountExists = ref(false);
 
-const {handleSubmit, values} = useForm({
+const {handleSubmit, isSubmitting} = useForm({
   validationSchema: formSchema
 })
 
-const {execute, isFetching} = useFetch('/users/register', {
-  immediate: false, onFetchError(ctx) {
-    if (ctx.data.errors.some(error => error.code === "DuplicatedEmailConstraint")) {
-      accountExists.value = true;
-    }
-  }
-}).post(values).json();
-
-const onSubmit = handleSubmit(() => {
-  accountExists.value = false;
-  execute()
+const onSubmit = handleSubmit(async (values) => {
+  const userStore = useUser()
+  await userStore.signUp(values)
 })
 
 </script>
@@ -58,7 +51,7 @@ const onSubmit = handleSubmit(() => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input :disabled="isFetching" type="text" placeholder="John" v-bind="componentField"/>
+                <Input :disabled="isSubmitting" type="text" placeholder="John" v-bind="componentField"/>
               </FormControl>
               <FormMessage/>
             </FormItem>
@@ -68,7 +61,7 @@ const onSubmit = handleSubmit(() => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input :disabled="isFetching" type="email" placeholder="email@example.com" v-bind="componentField"/>
+                <Input :disabled="isSubmitting" type="email" placeholder="email@example.com" v-bind="componentField"/>
               </FormControl>
               <FormMessage/>
             </FormItem>
@@ -78,14 +71,15 @@ const onSubmit = handleSubmit(() => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input :disabled="isFetching" type="password" placeholder="********" v-bind="componentField"/>
+                <Input :disabled="isSubmitting" type="password" placeholder="********" v-bind="componentField"/>
               </FormControl>
               <FormMessage/>
             </FormItem>
           </FormField>
 
-          <Button :disabled="isFetching" type="submit" class="w-full">
-            Sign Up
+          <Button :disabled="isSubmitting" type="submit" class="w-full">
+            <LoaderCircleIcon v-if="isSubmitting" class="size-4 animate-spin"/>
+            <template v-else>Sign Up</template>
           </Button>
         </form>
 
