@@ -28,8 +28,15 @@ public class SecurityFilterChainConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/login", "/api/users/register", "/api/users/verify", "/api/users/session").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(
+                                "/api/users/login",
+                                "/api/users/register",
+                                "/api/users/verify",
+                                "/api/users/session",
+                                "/login/oauth2/code/**"
+                        ).permitAll()
+                        .requestMatchers("/api/**")
+                        .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

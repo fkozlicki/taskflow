@@ -59,7 +59,6 @@ public class UserController {
                 )
         );
 
-
         User user = userService.getUserByEmail(loginRequest.getEmail());
         String accessToken = jwtService.generateToken(new CustomUserDetails(user));
 

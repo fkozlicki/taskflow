@@ -40,13 +40,12 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         Cookie[] cookies = request.getCookies();
+        final Cookie jwtCookie = cookies == null ? null : findAccessTokenCookie(cookies);
 
-        if (request.getServletPath().contains("/api/login") || cookies == null) {
+        if (request.getServletPath().contains("/api/login") || jwtCookie == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        final Cookie jwtCookie = findAccessTokenCookie(request.getCookies());
 
         final String jwt = jwtCookie.getValue();
         final String userEmail = jwtService.extractEmail(jwt);
