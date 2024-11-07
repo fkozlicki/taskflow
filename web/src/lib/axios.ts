@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 
 const api = axios.create({
     baseURL: 'http://localhost:8080/api',
@@ -6,16 +6,12 @@ const api = axios.create({
     withCredentials: true
 })
 
-export const get = async (endpoint: string) => {
-    try {
-        const response = await api.get(endpoint)
-        return response.data;
-    } catch (error) {
-        console.error(error)
-    }
+export const get = async (endpoint: string, config?: AxiosRequestConfig<any>) => {
+    const response = await api.get(endpoint, config)
+    return response.data;
 }
 
-export const post = async (endpoint: string, values: any) => {
-    const response = await api.post(endpoint, values)
+export const post = async (endpoint: string, values: any, config?: AxiosRequestConfig<any>) => {
+    const response = await api.post(endpoint, values, config)
     return response.data;
 }

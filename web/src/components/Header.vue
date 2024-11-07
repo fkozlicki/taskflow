@@ -4,7 +4,6 @@ import ThemeSwitch from "@/components/ThemeSwitch.vue";
 import {useUser} from "@/store/user.ts";
 import {storeToRefs} from "pinia";
 import UserDropdown from "@/components/UserDropdown.vue";
-import UserNavigation from "@/components/UserNavigation.vue";
 
 const userStore = useUser()
 const { user } = storeToRefs(userStore)
@@ -16,7 +15,6 @@ const { user } = storeToRefs(userStore)
       <RouterLink to="/">
         <div>Logo</div>
       </RouterLink>
-      <UserNavigation v-if="user" />
     </div>
     <nav class="flex items-center gap-2">
       <ThemeSwitch/>

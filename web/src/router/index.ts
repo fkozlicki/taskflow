@@ -7,17 +7,19 @@ export const router = createRouter({
     routes
 })
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to, from, next) => {
     const userStore = useUser()
 
     if (userStore.status === 'loading') {
         await userStore.getSession()
     }
 
-    if (!userStore.user && !['/sign-up', '/sign-in', '/', '/verify'].includes(to.path)) {
-        next({path: '/sign-in'})
-    } else if (userStore.user && ['/sign-up', '/sign-in', '/'].includes(to.path)) {
-        next({path: '/dashboard'})
+    if (to.meta.requireAuth && !userStore.user) {
+        next({name: 'SignIn'})
+    } else if (to.meta.requireGuest && userStore.user) {
+        next({name: 'Dashboard'})
+    } else if (to.meta.requireRedirect && from.name !== 'SignUp') {
+        next({name: 'Home'})
     } else {
         next()
     }

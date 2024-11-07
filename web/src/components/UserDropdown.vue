@@ -9,10 +9,11 @@ import {
   DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar";
-import {User} from "@/store/user.ts";
+import {User, useUser} from "@/store/user.ts";
 import {UserIcon} from "lucide-vue-next";
 
 const {user} = defineProps<{ user: User }>()
+const userStore = useUser()
 </script>
 
 <template>
@@ -30,7 +31,8 @@ const {user} = defineProps<{ user: User }>()
       <DropdownMenuSeparator/>
       <DropdownMenuItem>Profile</DropdownMenuItem>
       <DropdownMenuItem>Billing</DropdownMenuItem>
-      <DropdownMenuItem>Team</DropdownMenuItem>
+      <DropdownMenuItem @click="userStore.signOut()">Sign Out</DropdownMenuItem>
+
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

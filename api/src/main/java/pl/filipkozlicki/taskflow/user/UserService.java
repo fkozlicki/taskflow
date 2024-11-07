@@ -6,13 +6,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,7 +20,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
 
-    public void createUser(@Valid RegisterRequest registerRequest, String siteURL)
+    public User createUser(@Valid RegisterRequest registerRequest, String siteURL)
             throws UnsupportedEncodingException, MessagingException {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         String verificationCode = UUID.randomUUID().toString();
@@ -50,9 +48,14 @@ public class UserService {
                     .build();
         }
 
-        userRepository.save(newUser);
-
         sendVerificationEmail(newUser, siteURL);
+
+        return userRepository.save(newUser);
+    }
+
+    public User update(User user, UpdateUserRequest updateRequest) {
+
+        return userRepository.save(user);
     }
 
     public boolean verify(String code) {
@@ -71,10 +74,8 @@ public class UserService {
         }
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public Optional<User> getByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     private void sendVerificationEmail(User user, String siteURL)

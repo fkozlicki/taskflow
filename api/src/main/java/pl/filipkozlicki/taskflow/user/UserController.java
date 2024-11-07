@@ -1,7 +1,6 @@
 package pl.filipkozlicki.taskflow.user;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -12,10 +11,13 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
+import pl.filipkozlicki.taskflow.project.CreateProjectRequest;
+import pl.filipkozlicki.taskflow.project.Project;
+import pl.filipkozlicki.taskflow.project.ProjectService;
 import pl.filipkozlicki.taskflow.security.JWTService;
 
 import java.io.UnsupportedEncodingException;
@@ -28,6 +30,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
+    private final ProjectService projectService;
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(
@@ -59,7 +62,10 @@ public class UserController {
                 )
         );
 
-        User user = userService.getUserByEmail(loginRequest.getEmail());
+        User user = userService
+                .getByEmail(loginRequest.getEmail())
+                .orElseThrow(ResourceNotFoundException::new);
+
         String accessToken = jwtService.generateToken(new CustomUserDetails(user));
 
         ResponseCookie cookie = ResponseCookie.from("accessToken", accessToken)
@@ -88,7 +94,9 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
-        User user = userService.getUserByEmail(userDetails.getUsername());
+        User user = userService
+                .getByEmail(userDetails.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
 
         return ResponseEntity.ok().body(
                 UserDTO
@@ -100,5 +108,18 @@ public class UserController {
         );
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.status(200).body("Logged out successfully");
+    }
 
 }

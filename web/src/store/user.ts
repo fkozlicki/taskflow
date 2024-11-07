@@ -3,7 +3,6 @@ import {ref} from "vue";
 import {get, post} from "@/lib/axios.ts";
 import {toast} from "vue-sonner";
 import {useRoute, useRouter} from "vue-router";
-import axios from "axios";
 
 export interface User {
     id: string;
@@ -33,7 +32,7 @@ export const useUser = defineStore('user', () => {
             user.value = await post('/users/login', values)
             status.value = 'authenticated'
             toast.success('Sign in successful')
-            await router.push({name: 'Dashboard'})
+            await router.push({name: 'Projects'})
         } catch (error) {
             console.error(error)
             toast.error("Couldn't sign in. Try again")
@@ -59,7 +58,7 @@ export const useUser = defineStore('user', () => {
         form.setAttribute('method', 'GET')
         form.setAttribute('action', endpoint);
 
-        const params = {
+        const params: Record<string, string> = {
             client_id: '19915044324-odfrflr1ghroukhb62fqkcsv95aiuchd.apps.googleusercontent.com',
             redirect_uri: 'http://localhost:8080/login/oauth2/code/google',
             scope: 'https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -86,9 +85,9 @@ export const useUser = defineStore('user', () => {
             scope: 'user'
         }
 
-        const enpoint = `https://github.com/login/oauth/authorize?client_id=${params.client_id}&redirect_uri=${params.redirect_uri}`
+        const endpoint = `https://github.com/login/oauth/authorize?client_id=${params.client_id}&redirect_uri=${params.redirect_uri}`
 
-        window.location.href = enpoint
+        window.location.href = endpoint
     }
 
     const getSession = async () => {
@@ -116,5 +115,25 @@ export const useUser = defineStore('user', () => {
         }
     }
 
-    return {user, signIn, signUp, googleSignIn, githubSignIn, getSession, verify, status}
+    const signOut = async () => {
+        try {
+            await get('/users/logout')
+            user.value = null
+            await router.push({name: 'Home'})
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    return {
+        user,
+        signIn,
+        signUp,
+        googleSignIn,
+        githubSignIn,
+        getSession,
+        verify,
+        signOut,
+        status
+    }
 })
