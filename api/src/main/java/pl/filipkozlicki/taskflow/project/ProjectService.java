@@ -7,11 +7,9 @@ import pl.filipkozlicki.taskflow.project.dto.CreateProjectRequest;
 import pl.filipkozlicki.taskflow.project.dto.ReorderRequest;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.task.TaskRepository;
-import pl.filipkozlicki.taskflow.task.TaskService;
 import pl.filipkozlicki.taskflow.user.User;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

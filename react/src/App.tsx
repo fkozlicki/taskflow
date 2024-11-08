@@ -37,11 +37,12 @@ function App() {
 
   return (
     <Routes>
+      <Route path="*" element={<NotFound />} />
       <Route path="/" element={<Home />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route element={<ProjectLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects/:projectId">
           <Route path="" element={<Project />} />
           <Route path="tasks" element={<ProjectTasksLayout />}>
@@ -52,7 +53,6 @@ function App() {
           <Route path="schedule" element={<ProjectSchedule />} />
           <Route path="chat" element={<ProjectChat />} />
         </Route>
-        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

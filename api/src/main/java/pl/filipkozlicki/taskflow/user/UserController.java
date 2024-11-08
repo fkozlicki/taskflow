@@ -1,7 +1,6 @@
 package pl.filipkozlicki.taskflow.user;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
-import pl.filipkozlicki.taskflow.project.ProjectService;
 import pl.filipkozlicki.taskflow.security.JWTService;
 
 import java.io.UnsupportedEncodingException;
@@ -106,7 +104,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
                 .secure(false)

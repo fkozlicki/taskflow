@@ -27,7 +27,7 @@ export default function TasksColumn({
   };
 
   return (
-    <div className="border rounded-lg flex flex-col flex-1 max-h-full bg-slate-200/50">
+    <div className="border rounded-lg flex flex-col flex-1 max-h-full bg-slate-200/50 dark:bg-slate-950/65">
       <CreateTaskSheet
         status={col.id}
         open={sheetOpen}
