@@ -1,7 +1,8 @@
-package pl.filipkozlicki.taskflow.project;
+package pl.filipkozlicki.taskflow.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import pl.filipkozlicki.taskflow.project.Project;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,21 +10,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
-public class TasksResponse {
-    private List<TaskDTO> todo;
+public class ProjectTasksResponse {
+    private List<ProjectTaskDTO> todo;
     @JsonProperty("in-review")
-    private List<TaskDTO> inReview;
+    private List<ProjectTaskDTO> inReview;
     @JsonProperty("in-progress")
-    private List<TaskDTO> inProgress;
-    private List<TaskDTO> done;
+    private List<ProjectTaskDTO> inProgress;
+    private List<ProjectTaskDTO> done;
 
 
 
-    public TasksResponse(Project project) {
-        Map<String, List<TaskDTO>> groupedTasks = project
+    public ProjectTasksResponse(Project project) {
+        Map<String, List<ProjectTaskDTO>> groupedTasks = project
                 .getTasks()
                 .stream()
-                .map(TaskDTO::new)
+                .map(ProjectTaskDTO::new)
                 .collect(Collectors.groupingBy(task -> task.getStatus().toLowerCase()));
 
         this.todo = groupedTasks.getOrDefault("todo", Collections.emptyList());

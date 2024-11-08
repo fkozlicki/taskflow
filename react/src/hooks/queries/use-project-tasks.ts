@@ -6,8 +6,9 @@ export interface Task {
   name: string;
   description?: string;
   createdAt: string;
-  dueDate: string;
+  dueDate: string | Date;
   status: string;
+  position: number;
 }
 
 async function getProjectTasks(projectId: string) {

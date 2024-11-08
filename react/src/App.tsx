@@ -11,11 +11,14 @@ import Project from "@/routes/(signedIn)/project.tsx";
 import ProjectTasks from "@/routes/(signedIn)/project-tasks.tsx";
 import ProjectSchedule from "@/routes/(signedIn)/project-schedule.tsx";
 import ProjectChat from "@/routes/(signedIn)/project-chat.tsx";
+import ProjectTasksLayout from "@/components/project-tasks-layout.tsx";
+import ProjectTasksTimeline from "@/routes/(signedIn)/project-tasks-timeline.tsx";
+import ProjectTasksList from "@/routes/(signedIn)/project-tasks-list.tsx";
 
 const publicRoutes = ["/home", "/sign-up", "/sign-in"];
 
 function App() {
-  const { data } = useSession();
+  const { data, isPending } = useSession();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -23,7 +26,14 @@ function App() {
     if (data && publicRoutes.includes(pathname)) {
       navigate("/dashboard");
     }
-  }, [data]);
+    if (!isPending && !data && !publicRoutes.includes(pathname)) {
+      navigate("/sign-in");
+    }
+  }, [data, isPending, navigate, pathname]);
+
+  if (isPending) {
+    return null;
+  }
 
   return (
     <Routes>
@@ -34,7 +44,11 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects/:projectId">
           <Route path="" element={<Project />} />
-          <Route path="tasks" element={<ProjectTasks />} />
+          <Route path="tasks" element={<ProjectTasksLayout />}>
+            <Route path="" element={<ProjectTasks />} />
+            <Route path="list" element={<ProjectTasksList />} />
+            <Route path="timeline" element={<ProjectTasksTimeline />} />
+          </Route>
           <Route path="schedule" element={<ProjectSchedule />} />
           <Route path="chat" element={<ProjectChat />} />
         </Route>

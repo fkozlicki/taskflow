@@ -1,6 +1,7 @@
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet.tsx";
@@ -35,6 +36,8 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { useCreateTask } from "@/hooks/mutations/use-create-task.ts";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import { columns } from "@/lib/constants.ts";
 
 const createTaskSchema = z.object({
   name: z.string().min(1),
@@ -46,13 +49,6 @@ const createTaskSchema = z.object({
 });
 
 type CreateTaskValues = z.infer<typeof createTaskSchema>;
-
-const statuses = [
-  { value: "todo", label: "To Do" },
-  { value: "in-progress", label: "In Progress" },
-  { value: "in-review", label: "In Review" },
-  { value: "done", label: "Done" },
-];
 
 export default function CreateTaskSheet({
   open,
@@ -78,6 +74,10 @@ export default function CreateTaskSheet({
     },
   });
 
+  useEffect(() => {
+    form.setValue("position", position);
+  }, [position, form]);
+
   const { mutate } = useCreateTask();
 
   function onSubmit(values: CreateTaskValues) {
@@ -87,7 +87,9 @@ export default function CreateTaskSheet({
         form.reset();
         onOpenChange(false);
       },
-      onError() {
+      onError(err) {
+        console.log(err);
+
         toast.error("Something went wrong. Try again.");
       },
     });
@@ -98,6 +100,9 @@ export default function CreateTaskSheet({
       <SheetContent className="sm:max-w-lg flex flex-col">
         <SheetHeader className="mb-4">
           <SheetTitle>Create Task</SheetTitle>
+          <SheetDescription>
+            Fill out the form to create new task
+          </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
@@ -150,9 +155,9 @@ export default function CreateTaskSheet({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {statuses.map((status) => (
-                          <SelectItem key={status.value} value={status.value}>
-                            {status.label}
+                        {columns.map((col) => (
+                          <SelectItem key={col.id} value={col.id}>
+                            {col.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -192,9 +197,7 @@ export default function CreateTaskSheet({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date < new Date()}
                           initialFocus
                         />
                       </PopoverContent>

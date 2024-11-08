@@ -1,4 +1,4 @@
-package pl.filipkozlicki.taskflow.project;
+package pl.filipkozlicki.taskflow.project.dto;
 
 
 import lombok.AllArgsConstructor;

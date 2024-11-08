@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
+import pl.filipkozlicki.taskflow.project.dto.*;
 import pl.filipkozlicki.taskflow.user.User;
 import pl.filipkozlicki.taskflow.user.UserService;
 
@@ -87,10 +88,22 @@ public class ProjectController {
     public ResponseEntity<?> tasks(@PathVariable String id) {
         return projectService
                 .getById(id)
-                .map(TasksResponse::new)
+                .map(ProjectTasksResponse::new)
                 .map(ResponseEntity::ok)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
+    @PatchMapping("/{id}/tasks/reorder")
+    public ResponseEntity<?> updateTask(
+            @PathVariable String id,
+            @RequestBody ReorderRequest reorderRequest
+    ) {
+        projectService.reorderTasks(reorderRequest);
 
+        return projectService
+                .getById(id)
+                .map(ProjectTasksResponse::new)
+                .map(ResponseEntity::ok)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
 }

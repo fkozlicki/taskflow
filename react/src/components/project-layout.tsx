@@ -64,7 +64,7 @@ export default function ProjectLayout() {
         </div>
       </div>
 
-      <div className="flex-1 border rounded-2xl p-2">
+      <div className="flex-1 flex flex-col border rounded-2xl p-4 bg-gray-50">
         <Outlet />
       </div>
     </div>

@@ -1,6 +1,7 @@
-package pl.filipkozlicki.taskflow.project;
+package pl.filipkozlicki.taskflow.project.dto;
 
 import lombok.Data;
+import pl.filipkozlicki.taskflow.project.Project;
 
 @Data
 public class CreateProjectResponse {

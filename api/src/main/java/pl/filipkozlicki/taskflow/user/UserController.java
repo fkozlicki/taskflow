@@ -15,8 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
-import pl.filipkozlicki.taskflow.project.CreateProjectRequest;
-import pl.filipkozlicki.taskflow.project.Project;
 import pl.filipkozlicki.taskflow.project.ProjectService;
 import pl.filipkozlicki.taskflow.security.JWTService;
 
@@ -30,7 +28,6 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private final ProjectService projectService;
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(
