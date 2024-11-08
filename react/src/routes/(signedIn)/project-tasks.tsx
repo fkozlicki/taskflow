@@ -1,10 +1,12 @@
 import {
+  Active,
   DndContext,
   DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
+  Over,
   PointerSensor,
   TouchSensor,
   useDroppable,
@@ -14,6 +16,7 @@ import {
 import {
   arrayMove,
   SortableContext,
+  SortableData,
   sortableKeyboardCoordinates,
   useSortable,
 } from "@dnd-kit/sortable";
@@ -28,6 +31,14 @@ import { Task, useProjectTasks } from "@/hooks/queries/use-project-tasks.ts";
 
 // const columns = ["todo", "in-progress", "in-review", "done"];
 
+export const arrayRemove = (array, index) => {
+  return array.filter((_, i) => i !== index);
+};
+
+export const arrayInsert = (array, index, value) => {
+  return [...array.slice(0, index), value, ...array.slice(index)];
+};
+
 export default function ProjectTasks() {
   const sensors = useSensors(
     useSensor(TouchSensor),
@@ -41,133 +52,119 @@ export default function ProjectTasks() {
 
   const { data } = useProjectTasks(projectId!);
 
-  const [taskList, setTaskList] = useState<Record<string, Task[]>>({
-    todo: [],
-    "in-progress": [],
-    "in-review": [],
-    done: [],
-  });
+  const [taskList, setTaskList] = useState<Map<string, Task[]>>(
+    new Map(
+      Object.entries({
+        todo: [],
+        "in-progress": [],
+        "in-review": [],
+        done: [],
+      }),
+    ),
+  );
 
   useEffect(() => {
     if (data) {
-      setTaskList(data);
+      setTaskList(new Map(Object.entries(data)));
     }
   }, [data]);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const dragStartHandler = (e: DragStartEvent) => {
-    const data = e.active.data.current?.task;
+  const getFromData = (active: Active) => {
+    const activeData = active.data.current as SortableData;
+    const items = taskList.get(activeData.sortable.containerId as string)!;
 
-    if (data) {
-      setActiveTask(data);
+    return {
+      containerId: activeData.sortable.containerId as string,
+      items,
+      index: activeData.sortable.index,
+    };
+  };
+
+  const getToData = (over: Over) => {
+    const overData = over.data.current as SortableData | undefined;
+    const containerId = (overData?.sortable.containerId ?? over.id) as string;
+
+    const items = taskList.get(containerId)!;
+
+    return {
+      containerId,
+      items,
+      index: overData?.sortable.index ?? 0,
+    };
+  };
+
+  const getData = (event: { active: Active; over: Over | null }) => {
+    const { active, over } = event;
+    if (over === null) {
+      return null;
     }
+
+    if (active.id === over.id) {
+      return null;
+    }
+
+    return {
+      from: getFromData(active),
+      to: getToData(over),
+    };
   };
 
-  const dragEndHandler = (e: DragEndEvent) => {
-    // Check if item is drag into unknown area
-    if (!e.over || !e.active.data.current || !e.over.data.current) return;
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveTask(event.active.data.current?.task ?? null);
+  };
 
-    // Check if item position is the same
-    if (e.active.id === e.over.id) return;
-
-    // Check if item is moved outside of the column
-    if (
-      e.active.data.current.sortable.containerId !==
-      e.over.data.current.sortable.containerId
-    )
+  const handleDragOver = (event: DragOverEvent) => {
+    const data = getData(event);
+    if (data == null) {
       return;
+    }
 
-    // Sort the items list order based on item target position
-    const containerName = e.active.data.current.sortable.containerId;
-    setTaskList((taskList) => {
-      const temp = { ...taskList };
-      if (!e.over) return temp;
-      const oldIdx = temp[containerName].findIndex(
-        (t) => t.id === e.active.id.toString(),
-      );
-      const newIdx = temp[containerName].findIndex(
-        (t) => t.id === e.over?.id.toString(),
-      );
-      temp[containerName] = arrayMove(temp[containerName], oldIdx, newIdx);
-      return temp;
-    });
+    const { from, to } = data;
+
+    if (from.containerId === to.containerId) {
+      return;
+    }
+
+    const item = from.items[from.index];
+
+    const newFromItems = arrayRemove(from.items, from.index);
+    const newToItems = arrayInsert(to.items, to.index, item);
+
+    setTaskList(
+      new Map([
+        ...taskList.entries(),
+        [from.containerId, newFromItems],
+        [to.containerId, newToItems],
+      ]),
+    );
   };
 
-  const dragOverHandler = (e: DragOverEvent) => {
-    // Check if item is drag into unknown area
-    if (!e.over) return;
+  const handleDragEnd = (event: DragEndEvent) => {
+    const data = getData(event);
+    if (data == null) {
+      return;
+    }
 
-    // Get the initial and target sortable list name
-    const initialContainer = e.active.data.current?.sortable?.containerId;
-    const targetContainer = e.over.data.current?.sortable?.containerId;
+    const { from, to } = data;
 
-    // if there are none initial sortable list name, then item is not sortable item
-    if (!initialContainer) return;
+    const newFromItems = arrayMove(from.items, from.index, to.index);
 
-    // Order the item list based on target item position
-    setTaskList((taskList) => {
-      const temp = { ...taskList };
-
-      // If there are no target container then item is moved into a droppable zone
-      // droppable = whole area of the sortable list (works when the sortable list is empty)
-      if (!targetContainer) {
-        // If item is already there then don't re-added it
-        if (taskList[e.over!.id].some((t) => t.id === e.active.id.toString()))
-          return temp;
-
-        // Remove item from it's initial container
-        temp[initialContainer] = temp[initialContainer].filter(
-          (task) => task.id !== e.active.id.toString(),
-        );
-
-        // Add item to it's target container which the droppable zone belongs to
-        temp[e.over!.id].push(e.active.data.current?.task);
-
-        return temp;
-      }
-
-      // If the item is drag around in the same container then just reorder the list
-      if (initialContainer === targetContainer) {
-        const oldIdx = temp[initialContainer].findIndex(
-          (t) => t.id === e.active.id.toString(),
-        );
-        const newIdx = temp[initialContainer].findIndex(
-          (t) => t.id === e.over!.id.toString(),
-        );
-        temp[initialContainer] = arrayMove(
-          temp[initialContainer],
-          oldIdx,
-          newIdx,
-        );
-      } else {
-        // If the item is drag into another different container
-
-        // Remove item from it's initial container
-        temp[initialContainer] = temp[initialContainer].filter(
-          (task) => task.id !== e.active.id.toString(),
-        );
-
-        // Add item to it's target container
-        const newIdx = temp[targetContainer].findIndex(
-          (t) => t.id === e.over!.id.toString(),
-        );
-        temp[targetContainer].splice(newIdx, 0, e.active.data.current?.task);
-      }
-
-      return temp;
-    });
+    setTaskList(
+      new Map([...taskList.entries(), [from.containerId, newFromItems]]),
+    );
   };
 
   return (
     <DndContext
       sensors={sensors}
-      onDragEnd={dragEndHandler}
-      onDragOver={dragOverHandler}
-      onDragStart={dragStartHandler}
+      onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDragStart={handleDragStart}
     >
       <div className="grid grid-cols-4 gap-4 items-start">
-        {Object.entries(taskList).map(([col, tasks]) => (
+        {Array.from(taskList).map(([col, tasks]) => (
           <KanbanColumn key={col} col={col} tasks={tasks} />
         ))}
       </div>
@@ -246,7 +243,7 @@ function TaskCard({ task, isOverlay }: { task: Task; isOverlay?: boolean }) {
   return (
     <div
       className={cn(
-        "border rounded-lg",
+        "border rounded-lg select-none",
         isOverlay && "",
         isDragging && "opacity-40",
         isOverlay && "ring-2",
