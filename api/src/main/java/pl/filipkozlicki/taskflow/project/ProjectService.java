@@ -2,6 +2,7 @@ package pl.filipkozlicki.taskflow.project;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import pl.filipkozlicki.taskflow.project.dto.CreateProjectRequest;
 import pl.filipkozlicki.taskflow.project.dto.ReorderRequest;
@@ -22,8 +23,13 @@ public class ProjectService {
         Project project = Project
                 .builder()
                 .name(projectRequest.getName())
+                .description(projectRequest.getDescription())
+                .invitationCode(generateUniqueCode())
                 .owner(user)
                 .build();
+
+        project.setOwner(user);
+        project.getUsers().add(user);
 
         return projectRepository.save(project);
     }
@@ -58,6 +64,16 @@ public class ProjectService {
         } else {
             reorderAcrossStatuses(task, reorderRequest);
         }
+    }
+
+    public String generateUniqueCode() {
+        String code;
+
+        do {
+            code = RandomStringUtils.randomAlphanumeric(8);
+        } while (projectRepository.existsByInvitationCode(code));
+
+        return code;
     }
 
     private void reorderWithinSameStatus(Task task, ReorderRequest reorderRequest) {

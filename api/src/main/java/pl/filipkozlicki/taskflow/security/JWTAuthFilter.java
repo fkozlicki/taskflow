@@ -42,7 +42,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         final Cookie jwtCookie = cookies == null ? null : findAccessTokenCookie(cookies);
 
-        if (request.getServletPath().contains("/api/login") || jwtCookie == null) {
+        if (request.getServletPath().contains("/api/users/login") || request.getServletPath().contains("/api/users/register") || jwtCookie == null) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.user.User;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,12 +25,17 @@ public class Project {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String invitationCode;
+
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
 
     @ManyToMany(mappedBy = "projects")
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     @OneToMany(mappedBy = "project")
     @OrderBy("position ASC")

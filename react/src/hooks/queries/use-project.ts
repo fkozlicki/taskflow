@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.ts";
 
-interface ProjectDetails {
+export interface ProjectDetails {
   id: string;
   name: string;
 }

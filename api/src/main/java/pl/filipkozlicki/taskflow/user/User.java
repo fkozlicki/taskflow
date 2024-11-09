@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import pl.filipkozlicki.taskflow.project.Project;
 import pl.filipkozlicki.taskflow.task.Task;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "_user")
@@ -40,7 +41,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    private Set<Project> projects;
+    private Set<Project> projects = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
