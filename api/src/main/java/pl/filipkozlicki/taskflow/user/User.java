@@ -5,21 +5,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import pl.filipkozlicki.taskflow.invitation.Invitation;
 import pl.filipkozlicki.taskflow.project.Project;
 import pl.filipkozlicki.taskflow.task.Task;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @Entity(name = "_user")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -31,23 +35,35 @@ public class User {
 
     private String verificationCode;
 
-
     @Column(nullable = false)
     private boolean enabled;
 
-    @ManyToMany
-    @JoinTable(
-            name = "project_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    private Set<Project> projects = new HashSet<>();
+    @ManyToMany(mappedBy = "users")
+    private List<Project> projects;
 
-    @ManyToMany
-    @JoinTable(
-            name = "task_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "task_id")
-    )
-    private Set<Task> tasks;
+    @ManyToMany(mappedBy = "users")
+    private List<Task> tasks;
+
+    @OneToMany(mappedBy = "inviter")
+    private List<Invitation> invitations;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

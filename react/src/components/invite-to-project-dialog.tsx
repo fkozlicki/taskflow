@@ -19,9 +19,12 @@ import {
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { PlusIcon } from "lucide-react";
+import { LoaderIcon, PlusIcon, UserIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
+import { useInvite } from "@/hooks/mutations/use-invite.ts";
+import { toast } from "sonner";
 
 const invitationSchema = z.object({
   email: z.string().min(1).email(),
@@ -41,7 +44,22 @@ export default function InviteToProjectDialog({
     },
   });
 
-  function onSubmit(values: InvitationValues) {}
+  const { mutate, isPending } = useInvite();
+
+  function onSubmit(values: InvitationValues) {
+    mutate(
+      { projectId: project.id, ...values },
+      {
+        onSuccess() {
+          toast.success("Sent invitation");
+          form.reset();
+        },
+        onError() {
+          toast.error("Couldn't send invitation. Try again.");
+        },
+      },
+    );
+  }
 
   return (
     <Dialog>
@@ -70,7 +88,13 @@ export default function InviteToProjectDialog({
                     <FormControl>
                       <Input placeholder="example@email.com" {...field} />
                     </FormControl>
-                    <Button type="submit">Invite</Button>
+                    <Button type="submit" disabled={isPending}>
+                      {isPending ? (
+                        <LoaderIcon className="size-4 animate-spin" />
+                      ) : (
+                        "Invite"
+                      )}
+                    </Button>
                   </div>
 
                   <FormMessage />
@@ -81,14 +105,37 @@ export default function InviteToProjectDialog({
         </Form>
 
         <div>
-          <span className="text-sm font-semibold">Members</span>
-          <ScrollArea></ScrollArea>
+          <span className="text-sm font-semibold inline-block mb-3">
+            Members
+          </span>
+          <ScrollArea className="max-h-28 overflow-auto flex flex-col">
+            <div className="flex flex-col gap-2">
+              {project.members.map((member) => (
+                <div key={member.id} className="flex items-center gap-2">
+                  <Avatar className="size-8">
+                    <AvatarFallback>
+                      <UserIcon className="size-3" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">{member.name}</span>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
 
         <Separator />
 
         <div className="flex gap-4 items-center">
-          <Button size="sm" className="font-semibold">
+          <Button
+            size="sm"
+            className="font-semibold"
+            onClick={() => {
+              void navigator.clipboard.writeText(
+                `${window.origin}/projects/join?code=${project.invitationCode}`,
+              );
+            }}
+          >
             Copy share link
           </Button>
           <p className="text-sm font-medium">

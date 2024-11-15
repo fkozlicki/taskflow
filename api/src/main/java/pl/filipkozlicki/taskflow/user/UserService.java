@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +21,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
 
+    public List<User> getUsersByIds(List<UUID> userIds) {
+       return userRepository.findAllById(userIds);
+    }
+
     public User createUser(@Valid RegisterRequest registerRequest, String siteURL)
             throws UnsupportedEncodingException, MessagingException {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
@@ -29,7 +34,7 @@ public class UserService {
                 .findByEmail(registerRequest.getEmail())
                 .orElse(null);
 
-        User newUser = null;
+        User newUser;
 
         if (existingUser != null && !existingUser.isEnabled()) {
             existingUser.setName(registerRequest.getName());
@@ -90,7 +95,7 @@ public class UserService {
                 + "Please click the link below to verify your registration:<br>"
                 + "<h3><a href=\"%s\" target=\"_self\">VERIFY</a></h3>"
                 + "Thank you,<br>"
-                + "Your company name.", user.getName(), verifyURL);
+                + "Taskflow", user.getName(), verifyURL);
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);

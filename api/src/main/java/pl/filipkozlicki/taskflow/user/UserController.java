@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
 import pl.filipkozlicki.taskflow.security.JWTService;
@@ -37,7 +36,7 @@ public class UserController {
         return ResponseEntity.status(201).body(new HashMap<>());
     }
 
-    @GetMapping("/verify")
+    @PostMapping("/verify")
     public ResponseEntity<String> verifyUser(@RequestParam("code") String code) {
         boolean result = userService.verify(code);
 
@@ -61,7 +60,7 @@ public class UserController {
                 .getByEmail(loginRequest.getEmail())
                 .orElseThrow(ResourceNotFoundException::new);
 
-        String accessToken = jwtService.generateToken(new CustomUserDetails(user));
+        String accessToken = jwtService.generateToken(user);
 
         ResponseCookie cookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
@@ -84,14 +83,10 @@ public class UserController {
     }
 
     @GetMapping("/session")
-    public ResponseEntity<?> session(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) {
+    public ResponseEntity<?> session(@AuthenticationPrincipal User user) {
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-
-        User user = userService
-                .getByEmail(userDetails.getUsername())
-                .orElseThrow(ResourceNotFoundException::new);
 
         return ResponseEntity.ok().body(
                 UserDTO

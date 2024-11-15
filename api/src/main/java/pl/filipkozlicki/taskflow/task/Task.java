@@ -11,7 +11,7 @@ import pl.filipkozlicki.taskflow.project.Project;
 import pl.filipkozlicki.taskflow.user.User;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -39,8 +39,13 @@ public class Task {
 
     private LocalDateTime dueDate;
 
-    @ManyToMany(mappedBy = "tasks")
-    private Set<User> users;
+    @ManyToMany
+    @JoinTable(
+            name = "task_user",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> users;
 
     private Integer position;
 

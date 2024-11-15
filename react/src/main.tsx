@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
@@ -10,14 +9,12 @@ import { ThemeProvider } from "next-themes";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ThemeProvider attribute="class">
-          <App />
-          <Toaster richColors />
-        </ThemeProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
-  </StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <ThemeProvider attribute="class">
+        <App />
+        <Toaster richColors />
+      </ThemeProvider>
+    </BrowserRouter>
+  </QueryClientProvider>,
 );

@@ -32,12 +32,15 @@ import {
 } from "@/components/ui/popover.tsx";
 import { cn } from "@/lib/utils.ts";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, UserIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { useCreateTask } from "@/hooks/mutations/use-create-task.ts";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { columns } from "@/lib/constants.ts";
+import MultiSelect from "@/components/ui/multi-select.tsx";
+import { useProject } from "@/hooks/queries/use-project.ts";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 
 const createTaskSchema = z.object({
   name: z.string().min(1),
@@ -46,6 +49,9 @@ const createTaskSchema = z.object({
   status: z.string().min(1),
   projectId: z.string().min(1),
   position: z.number(),
+  users: z
+    .array(z.string().min(1))
+    .min(1, "Assign at least 1 user to the task"),
 });
 
 type CreateTaskValues = z.infer<typeof createTaskSchema>;
@@ -63,6 +69,8 @@ export default function CreateTaskSheet({
   projectId: string;
   position: number;
 }) {
+  const { data } = useProject(projectId);
+
   const form = useForm<CreateTaskValues>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
@@ -71,6 +79,7 @@ export default function CreateTaskSheet({
       status,
       projectId,
       position,
+      users: [],
     },
   });
 
@@ -87,13 +96,17 @@ export default function CreateTaskSheet({
         form.reset();
         onOpenChange(false);
       },
-      onError(err) {
-        console.log(err);
-
+      onError() {
         toast.error("Something went wrong. Try again.");
       },
     });
   }
+
+  const userOptions =
+    data?.members.map((user) => ({
+      value: user.id,
+      label: user.name,
+    })) ?? [];
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -162,6 +175,38 @@ export default function CreateTaskSheet({
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="users"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Users</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        value={userOptions.filter((option) =>
+                          field.value.includes(option.value),
+                        )}
+                        onChange={(options) =>
+                          field.onChange(options.map((option) => option.value))
+                        }
+                        options={userOptions}
+                        formatOptionLabel={(data) => (
+                          <div className="flex gap-1 items-center">
+                            <Avatar className="size-5 border">
+                              <AvatarFallback>
+                                <UserIcon className="size-3" />
+                              </AvatarFallback>
+                            </Avatar>
+                            {data.label}
+                          </div>
+                        )}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

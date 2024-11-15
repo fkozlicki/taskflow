@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -12,8 +14,9 @@ import java.time.LocalDateTime;
 public class CreateTaskRequest {
     private String name;
     private String description;
-    private String projectId;
+    private UUID projectId;
     private LocalDateTime dueDate;
     private Integer position;
     private String status;
+    private List<UUID> users;
 }

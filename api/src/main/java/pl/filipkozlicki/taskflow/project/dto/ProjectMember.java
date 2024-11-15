@@ -3,9 +3,11 @@ package pl.filipkozlicki.taskflow.project.dto;
 import lombok.Getter;
 import pl.filipkozlicki.taskflow.user.User;
 
+import java.util.UUID;
+
 @Getter
 public class ProjectMember {
-    private String id;
+    private UUID id;
     private String name;
     private String email;
 

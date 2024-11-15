@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.filipkozlicki.taskflow.project.ProjectService;
 import pl.filipkozlicki.taskflow.user.User;
+import pl.filipkozlicki.taskflow.user.UserService;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,8 +14,11 @@ import java.util.Optional;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectService projectService;
+    private final UserService userService;
 
     public Task create(CreateTaskRequest taskRequest, User user) {
+        List<User> users = userService.getUsersByIds(taskRequest.getUsers());
+
         Task newTask = Task
                 .builder()
                 .name(taskRequest.getName())
@@ -22,11 +26,7 @@ public class TaskService {
                 .status(taskRequest.getStatus())
                 .project(projectService.getById(taskRequest.getProjectId()).orElseThrow())
                 .dueDate(taskRequest.getDueDate())
-                .users(new HashSet<>() {
-                    {
-                        add(user);
-                    }
-                })
+                .users(users)
                 .position(taskRequest.getPosition())
                 .build();
 

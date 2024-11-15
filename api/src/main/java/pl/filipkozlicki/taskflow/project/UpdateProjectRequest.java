@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateProjectRequest {
     private String name;
+    private String description;
 }

@@ -4,20 +4,67 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
+import pl.filipkozlicki.taskflow.invitation.Invitation;
+import pl.filipkozlicki.taskflow.invitation.InvitationRepository;
+import pl.filipkozlicki.taskflow.invitation.InvitationService;
 import pl.filipkozlicki.taskflow.project.dto.CreateProjectRequest;
 import pl.filipkozlicki.taskflow.project.dto.ReorderRequest;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.task.TaskRepository;
 import pl.filipkozlicki.taskflow.user.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
+    private final InvitationService invitationService;
+    private final InvitationRepository invitationRepository;
+
+    public Project joinWithToken(String token, User user) {
+        Invitation invitation = invitationService
+                .getByToken(token)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        Project project = invitation.getProject();
+
+        if (
+            !project.getUsers().contains(user) &&
+            invitation.getStatus().equals("pending") &&
+            invitation.getExpiresAt().isAfter(LocalDateTime.now())
+        ) {
+            invitation.setStatus("accepted");
+            invitationRepository.save(invitation);
+
+            project.getUsers().add(user);
+            projectRepository.save(project);
+
+            return project;
+        } else {
+            return null;
+        }
+    }
+
+    public Project joinWithCode(String code, User user) {
+        Project project = projectRepository
+                .findByInvitationCode(code)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        if (!project.getUsers().contains(user)) {
+            project.getUsers().add(user);
+            projectRepository.save(project);
+
+            return project;
+        } else {
+            return null;
+        }
+    }
 
     public Project create(CreateProjectRequest projectRequest, User user) {
         Project project = Project
@@ -26,29 +73,28 @@ public class ProjectService {
                 .description(projectRequest.getDescription())
                 .invitationCode(generateUniqueCode())
                 .owner(user)
+                .users(List.of(user))
                 .build();
-
-        project.setOwner(user);
-        project.getUsers().add(user);
 
         return projectRepository.save(project);
     }
 
-    public Optional<Project> getById(String id) {
+    public Optional<Project> getById(UUID id) {
         return projectRepository.findById(id);
     }
 
     public List<Project> getAllByUser(User user) {
-        return projectRepository.findAllByOwnerId(user.getId());
+        return projectRepository.findAllByUsersId(user.getId());
     }
 
     public Project update(Project project, UpdateProjectRequest projectRequest) {
         project.setName(projectRequest.getName());
+        project.setDescription(projectRequest.getDescription());
 
         return projectRepository.save(project);
     }
 
-    public void delete(String id) {
+    public void delete(UUID id) {
         projectRepository.deleteById(id);
     }
 

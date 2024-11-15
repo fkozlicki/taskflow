@@ -4,7 +4,10 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { EditIcon } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -14,12 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { Button } from "@/components/ui/button.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useCreateProject } from "@/hooks/mutations/use-create-project.ts";
 import { toast } from "sonner";
+import { z } from "zod";
+import { ProjectDetails } from "@/hooks/queries/use-project.ts";
+import { useEffect, useState } from "react";
+import { useEditProject } from "@/hooks/mutations/use-edit-project.ts";
 
 const createProjectSchema = z.object({
   name: z.string().min(1),
@@ -28,45 +32,52 @@ const createProjectSchema = z.object({
 
 type CreateProjectValues = z.infer<typeof createProjectSchema>;
 
-interface CreateProjectSheetProps {
-  open: boolean;
-  onOpenChange: (value: boolean) => void;
-}
+export default function EditProjectSheet({
+  project,
+}: {
+  project: ProjectDetails;
+}) {
+  const [open, setOpen] = useState<boolean>(false);
 
-export default function CreateProjectSheet({
-  open,
-  onOpenChange,
-}: CreateProjectSheetProps) {
   const form = useForm<CreateProjectValues>({
     resolver: zodResolver(createProjectSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-    },
+    defaultValues: project,
   });
 
-  const { mutate } = useCreateProject();
+  const { mutate } = useEditProject();
+
+  useEffect(() => {
+    form.reset(project);
+  }, [project, form]);
 
   function onSubmit(values: CreateProjectValues) {
-    mutate(values, {
-      onSuccess() {
-        toast.success("Created project");
-        form.reset();
-        onOpenChange(false);
+    mutate(
+      { id: project.id, ...values },
+      {
+        onSuccess() {
+          toast.success("Edited project");
+          form.reset();
+          setOpen(false);
+        },
+        onError() {
+          toast.error("Something went wrong. Try again.");
+        },
       },
-      onError() {
-        toast.error("Something went wrong. Try again.");
-      },
-    });
+    );
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <EditIcon className="size-4" />
+        </Button>
+      </SheetTrigger>
       <SheetContent className="sm:max-w-lg flex flex-col">
         <SheetHeader className="mb-4">
-          <SheetTitle>Create Project</SheetTitle>
+          <SheetTitle>Edit Project</SheetTitle>
           <SheetDescription>
-            Fill out the form to create new project
+            Fill out the form to edit the project
           </SheetDescription>
         </SheetHeader>
 
@@ -105,7 +116,7 @@ export default function CreateProjectSheet({
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Save</Button>
           </form>
         </Form>
       </SheetContent>

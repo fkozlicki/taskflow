@@ -1,39 +1,80 @@
 package pl.filipkozlicki.taskflow.project;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
+import pl.filipkozlicki.taskflow.invitation.InvitationService;
 import pl.filipkozlicki.taskflow.project.dto.*;
 import pl.filipkozlicki.taskflow.user.User;
-import pl.filipkozlicki.taskflow.user.UserService;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
-    private final UserService userService;
+    private final InvitationService invitationService;
+
+    @PostMapping("/{id}/invite")
+    public ResponseEntity<?> inviteToProject(
+            @PathVariable("id") UUID projectId,
+            @RequestBody InviteRequest inviteRequest,
+            @AuthenticationPrincipal User user,
+            @RequestHeader("Origin") String origin
+    ) throws MessagingException, UnsupportedEncodingException {
+
+        Project project = projectService
+                .getById(projectId)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        var invitation = invitationService.createInvitation(project, inviteRequest, user);
+
+        invitationService.sendInvitationEmail(invitation, origin);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<?> joinProject(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String token,
+            @AuthenticationPrincipal User user
+    ) {
+        Project project = null;
+
+        if (code != null) {
+            project = projectService.joinWithCode(code, user);
+        }
+        if (token != null) {
+            project = projectService.joinWithToken(token, user);
+        }
+
+
+        if (project != null) {
+            return ResponseEntity.ok(new ProjectResponse(project));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid project code or user is already a member.");
+        }
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectResponse> get(@PathVariable String id) {
+    public ResponseEntity<ProjectResponse> get(@PathVariable UUID id, @AuthenticationPrincipal User user) {
         return projectService
                 .getById(id)
-                .map(ProjectResponse::new)
+                .map(project -> new ProjectResponse(project, project.getOwner().getEmail().equals(user.getEmail())))
                 .map(ResponseEntity::ok)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = userService
-                .getByEmail(userDetails.getUsername())
-                .orElseThrow(ResourceNotFoundException::new);
-
+    public ResponseEntity<List<ProjectResponse>> getAll(@AuthenticationPrincipal User user) {
         List<ProjectResponse> projects = projectService
                 .getAllByUser(user)
                 .stream()
@@ -46,12 +87,8 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<CreateProjectResponse> create(
             @RequestBody CreateProjectRequest projectRequest,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
-        User user = userService
-                .getByEmail(userDetails.getUsername())
-                .orElseThrow(ResourceNotFoundException::new);
-
         Project project = projectService.create(projectRequest, user);
 
         return ResponseEntity
@@ -61,7 +98,7 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @RequestBody UpdateProjectRequest projectRequest
     ) {
         return projectService
@@ -74,7 +111,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id) {
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
         return projectService
                 .getById(id)
                 .map(project -> {
@@ -85,7 +122,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}/tasks")
-    public ResponseEntity<?> tasks(@PathVariable String id) {
+    public ResponseEntity<?> tasks(@PathVariable UUID id) {
         return projectService
                 .getById(id)
                 .map(ProjectTasksResponse::new)
@@ -95,7 +132,7 @@ public class ProjectController {
 
     @PatchMapping("/{id}/tasks/reorder")
     public ResponseEntity<?> updateTask(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @RequestBody ReorderRequest reorderRequest
     ) {
         projectService.reorderTasks(reorderRequest);

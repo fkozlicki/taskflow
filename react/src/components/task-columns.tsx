@@ -1,8 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Task } from "@/hooks/queries/use-project-tasks.ts";
-import { Badge } from "@/components/ui/badge.tsx";
-import { cn } from "@/lib/utils.ts";
-import { columns } from "@/lib/constants.ts";
+import TaskStatusBadge from "@/components/task-status-badge.tsx";
+import { format } from "date-fns";
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -10,23 +9,8 @@ export const taskColumns: ColumnDef<Task>[] = [
     header: "Status",
     cell: ({ getValue }) => {
       const status = getValue<string>();
-      const column = columns.find((col) => col.id === status)!;
 
-      return (
-        <Badge
-          variant="outline"
-          className={cn("rounded-full", {
-            "": status === "todo",
-          })}
-          style={{
-            borderColor: column.color,
-            backgroundColor: `${column.color}20`,
-            color: column.color,
-          }}
-        >
-          {column.label}
-        </Badge>
-      );
+      return <TaskStatusBadge status={status} />;
     },
   },
   {
@@ -34,11 +18,17 @@ export const taskColumns: ColumnDef<Task>[] = [
     header: "Name",
   },
   {
+    accessorKey: "description",
+    header: "Description",
+  },
+  {
     accessorKey: "dueDate",
     header: "Due Date",
+    cell: ({ getValue }) => format(getValue<string>(), "P"),
   },
   {
     accessorKey: "createdAt",
     header: "Created At",
+    cell: ({ getValue }) => format(getValue<string>(), "P"),
   },
 ];

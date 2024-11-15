@@ -10,12 +10,14 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import {
   BellIcon,
   ChevronsUpDownIcon,
+  LayoutDashboard,
   LogOutIcon,
-  UserIcon,
+  SettingsIcon,
 } from "lucide-react";
 import { useSession } from "@/hooks/queries/use-session.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { useSignOut } from "@/hooks/mutations/use-sign-out.ts";
+import { Link } from "react-router-dom";
 
 export default function UserMenu() {
   const { data } = useSession();
@@ -56,14 +58,27 @@ export default function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <UserIcon />
-          Account
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <BellIcon />
-          Notifications
-        </DropdownMenuItem>
+        <Link to="/dashboard">
+          <DropdownMenuItem>
+            <LayoutDashboard />
+            Dashboard
+          </DropdownMenuItem>
+        </Link>
+
+        <Link to="/notifications">
+          <DropdownMenuItem>
+            <BellIcon />
+            Notifications
+          </DropdownMenuItem>
+        </Link>
+
+        <Link to="/settings">
+          <DropdownMenuItem>
+            <SettingsIcon />
+            Settings
+          </DropdownMenuItem>
+        </Link>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled={isPending} onClick={() => mutate()}>
           <LogOutIcon />

@@ -14,8 +14,13 @@ import ProjectChat from "@/routes/(signedIn)/project-chat.tsx";
 import ProjectTasksLayout from "@/components/project-tasks-layout.tsx";
 import ProjectTasksTimeline from "@/routes/(signedIn)/project-tasks-timeline.tsx";
 import ProjectTasksList from "@/routes/(signedIn)/project-tasks-list.tsx";
+import Verify from "@/routes/(public)/verify.tsx";
+import JoinProject from "@/routes/(signedIn)/join-project.tsx";
+import Settings from "@/routes/(signedIn)/settings.tsx";
+import DashboardLayout from "@/components/dashboard-layout.tsx";
+import Notifications from "@/routes/(signedIn)/notifications.tsx";
 
-const publicRoutes = ["/home", "/sign-up", "/sign-in"];
+const publicRoutes = ["/", "/sign-up", "/sign-in", "/verify"];
 
 function App() {
   const { data, isPending } = useSession();
@@ -41,7 +46,16 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/verify" element={<Verify />} />
+
+      <Route element={<DashboardLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/notifications" element={<Notifications />} />
+      </Route>
+
+      <Route path="/projects/join" element={<JoinProject />} />
+
       <Route element={<ProjectLayout />}>
         <Route path="/projects/:projectId">
           <Route path="" element={<Project />} />

@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.filipkozlicki.taskflow.invitation.Invitation;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.user.User;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -20,7 +21,7 @@ import java.util.Set;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -34,10 +35,18 @@ public class Project {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @ManyToMany(mappedBy = "projects")
-    private Set<User> users = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "project_user",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> users;
 
     @OneToMany(mappedBy = "project")
     @OrderBy("position ASC")
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project")
+    private List<Invitation> invitations;
 }

@@ -4,6 +4,14 @@ import { axiosInstance } from "@/lib/axios.ts";
 export interface ProjectDetails {
   id: string;
   name: string;
+  description?: string;
+  isOwner: boolean;
+  members: {
+    id: string;
+    name: string;
+    email: string;
+  }[];
+  invitationCode: string;
 }
 
 async function getProject(id: string) {
