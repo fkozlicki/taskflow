@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sheet.tsx";
 import { useState } from "react";
 import { PlusIcon } from "lucide-react";
+import CreateEventForm from "@/components/create-event-form.tsx";
 
 function useCalendarDates(currentDate: Date, weekStartsOnMonday: boolean) {
   const monthStart = startOfMonth(currentDate);
@@ -213,16 +214,21 @@ function CalendarDaySheet({
           <SheetTitle>{format(date, "do MMMM yyyy")}</SheetTitle>
           <SheetDescription>Events & activities</SheetDescription>
         </SheetHeader>
-        <div className="flex-1 grid place-items-center">
-          <span className="text-muted-foreground">No events this day</span>
-        </div>
         {create ? (
-          <Button onClick={() => setCreate(false)}>
+          <CreateEventForm date={new Date(date)} />
+        ) : (
+          <div className="flex-1 grid place-items-center">
+            <span className="text-muted-foreground">No events this day</span>
+          </div>
+        )}
+
+        {create ? (
+          <Button variant="outline" onClick={() => setCreate(false)}>
             <ArrowLeftIcon />
             Events
           </Button>
         ) : (
-          <Button onClick={() => setCreate(true)}>
+          <Button variant="outline" onClick={() => setCreate(true)}>
             <PlusIcon />
             Create event
           </Button>
