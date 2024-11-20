@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.filipkozlicki.taskflow.chat.Chat;
+import pl.filipkozlicki.taskflow.event.Event;
 import pl.filipkozlicki.taskflow.invitation.Invitation;
+import pl.filipkozlicki.taskflow.milestone.Milestone;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.user.User;
 
@@ -45,6 +47,9 @@ public class Project {
     private List<User> users;
 
     @OneToMany(mappedBy = "project")
+    private List<Milestone> milestones;
+
+    @OneToMany(mappedBy = "project")
     @OrderBy("position ASC")
     private List<Task> tasks;
 
@@ -54,5 +59,6 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Chat> chats;
 
-
+    @OneToMany(mappedBy = "project")
+    private List<Event> events;
 }
