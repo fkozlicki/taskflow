@@ -6,9 +6,9 @@ import { icons } from "@/components/icons";
 
 export default function SignUp() {
   return (
-    <div className="flex p-4 h-screen">
-      <div className="flex-1 relative bg-gradient-to-tr from-[#1e3c72] to-[#2a5298] rounded-2xl">
-        <div className="absolute top-8 left-9">
+    <div className="flex p-4 h-screen gap-4">
+      <div className="flex-1 relative bg-gradient-to-tr from-[#1e3c72] to-[#2a5298] rounded-2xl hidden lg:block">
+        <div className="absolute p-8">
           <p className="text-white/50 mb-4">Join now and</p>
           <p className="text-4xl text-white font-medium">
             Boost your productivity <br /> with Taskflow

@@ -134,6 +134,7 @@ export default function InviteToProjectDialog({
               void navigator.clipboard.writeText(
                 `${window.origin}/projects/join?code=${project.invitationCode}`,
               );
+              toast.success("Copied share link");
             }}
           >
             Copy share link

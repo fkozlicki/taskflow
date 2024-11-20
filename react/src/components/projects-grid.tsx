@@ -31,7 +31,7 @@ export default function ProjectsGrid() {
           <span className="sr-only">Create Project</span>
         </Button>
       </div>
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-4 gap-4">
         {data.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}

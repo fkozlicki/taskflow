@@ -83,6 +83,10 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> getById(UUID id) {
+        return userRepository.findById(id);
+    }
+
     private void sendVerificationEmail(User user, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
         String verifyURL = siteURL + "/verify?code=" + user.getVerificationCode();

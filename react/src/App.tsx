@@ -19,6 +19,8 @@ import JoinProject from "@/routes/(signedIn)/join-project.tsx";
 import Settings from "@/routes/(signedIn)/settings.tsx";
 import DashboardLayout from "@/components/dashboard-layout.tsx";
 import Notifications from "@/routes/(signedIn)/notifications.tsx";
+import ChatLayout from "@/components/chat-layout.tsx";
+import ProjectChats from "@/routes/(signedIn)/project-chats.tsx";
 
 const publicRoutes = ["/", "/sign-up", "/sign-in", "/verify"];
 
@@ -65,7 +67,10 @@ function App() {
             <Route path="timeline" element={<ProjectTasksTimeline />} />
           </Route>
           <Route path="schedule" element={<ProjectSchedule />} />
-          <Route path="chat" element={<ProjectChat />} />
+          <Route path="chat" element={<ChatLayout />}>
+            <Route path="" element={<ProjectChats />} />
+            <Route path=":chatId" element={<ProjectChat />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

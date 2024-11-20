@@ -33,7 +33,8 @@ public class SecurityFilterChainConfig {
                                 "/api/users/register",
                                 "/api/users/verify",
                                 "/api/users/session",
-                                "/login/oauth2/code/**"
+                                "/login/oauth2/code/**",
+                                "/ws/**"
                         ).permitAll()
                         .requestMatchers("/api/**")
                         .authenticated()

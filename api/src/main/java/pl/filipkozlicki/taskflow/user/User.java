@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.filipkozlicki.taskflow.chat.Chat;
 import pl.filipkozlicki.taskflow.invitation.Invitation;
+import pl.filipkozlicki.taskflow.message.Message;
 import pl.filipkozlicki.taskflow.project.Project;
 import pl.filipkozlicki.taskflow.task.Task;
 
@@ -44,8 +46,15 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "users")
     private List<Task> tasks;
 
+    @ManyToMany(mappedBy = "users")
+    private List<Chat> chats;
+
+    @OneToMany(mappedBy = "sender")
+    private List<Message> messages;
+
     @OneToMany(mappedBy = "inviter")
     private List<Invitation> invitations;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
