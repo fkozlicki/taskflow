@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button.tsx";
 import { LoaderIcon, SendHorizonalIcon } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useParams } from "react-router-dom";
 import { PageMessages, useChatMessages } from "@/hooks/queries/use-chat.ts";
@@ -75,8 +74,6 @@ export default function ProjectChat() {
       ref.current.scrollIntoView({ block: "end" });
     }
   });
-
-  const firstMessage = data?.pages[0].messages[0];
 
   function onSubmit(values: MessageValues) {
     if (stompClient) {

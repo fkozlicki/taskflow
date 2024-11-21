@@ -12,6 +12,11 @@ export interface ProjectDetails {
     email: string;
   }[];
   invitationCode: string;
+  milestones: {
+    id: string;
+    content: string;
+    done: boolean;
+  }[];
 }
 
 async function getProject(id: string) {

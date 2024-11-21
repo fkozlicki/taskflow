@@ -10,7 +10,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { cn } from "@/lib/utils.ts";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import {
   ArrowLeftIcon,
@@ -27,6 +27,10 @@ import {
 import { useState } from "react";
 import { PlusIcon } from "lucide-react";
 import CreateEventForm from "@/components/create-event-form.tsx";
+import {
+  ProjectEvent,
+  useProjectEvents,
+} from "@/hooks/queries/use-project-events.ts";
 
 function useCalendarDates(currentDate: Date, weekStartsOnMonday: boolean) {
   const monthStart = startOfMonth(currentDate);
@@ -143,6 +147,11 @@ function CalendarGrid({
   calendarDays,
   currentDate,
 }: CalendarGridProps) {
+  const params = useParams();
+  const projectId = params.projectId!;
+
+  const { data } = useProjectEvents(projectId);
+
   return (
     <div className="grid grid-cols-7 gap-px border border-border bg-border rounded-xl overflow-hidden">
       {firstWeek.map((day) => (
@@ -158,6 +167,7 @@ function CalendarGrid({
           key={index.toString()}
           date={date}
           currentDate={currentDate}
+          events={data?.[formatISO(date, { representation: "date" })] ?? []}
         />
       ))}
     </div>
@@ -167,18 +177,20 @@ function CalendarGrid({
 interface CalendarDayProps {
   date: Date;
   currentDate: Date;
-  selectedDate?: string;
+  events: ProjectEvent[];
 }
 
-function CalendarDay({ date, currentDate }: CalendarDayProps) {
+function CalendarDay({ date, currentDate, events }: CalendarDayProps) {
   const isCurrentMonth = date.getMonth() === currentDate.getMonth();
   const formattedDate = formatISO(date, { representation: "date" });
   const [params, setSearchParams] = useSearchParams();
 
+  const slicedEvents = events.length > 3 ? events.slice(0, 2) : events;
+
   return (
     <div
       className={cn(
-        "aspect-square md:aspect-[3/2] pt-2 pb-10 px-3 font-mono text-lg relative transition-all duration-100 text-left flex space-x-2 select-none group cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950",
+        "aspect-square md:aspect-[3/2] pt-2 pb-10 px-3 font-mono text-lg relative transition-all duration-100 text-left flex flex-col select-none group cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950",
         isCurrentMonth && isToday(date)
           ? "bg-[#f0f0f0] dark:bg-[#202020]"
           : "bg-background",
@@ -191,9 +203,43 @@ function CalendarDay({ date, currentDate }: CalendarDayProps) {
         setSearchParams(newParams);
       }}
     >
-      <div className="group-hover:underline">{format(date, "d")}</div>
+      <div className="group-hover:underline mb-2">{format(date, "d")}</div>
+      <div className="flex flex-col gap-1">
+        {slicedEvents.map((event, index) => (
+          <div
+            key={event.id}
+            className={cn(
+              "text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 inline-flex justify-between",
+            )}
+            style={{
+              background: getEventBackground(index),
+            }}
+          >
+            <span>{event.title}</span>
+            {event.startTime && event.endTime && (
+              <span>
+                {format(event.startTime, "HH:mm")} -
+                {format(event.endTime, "HH:mm")}
+              </span>
+            )}
+            {event.allDay && <span>All day</span>}
+          </div>
+        ))}
+        {events.length > 3 && (
+          <div className="text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 bg-slate-400">
+            +{events.length - 2} events
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+function getEventBackground(index: number) {
+  const colors = ["#FF5733", "#33B5FF", "#33FF57", "#FFC133"]; // Array of vibrant colors
+
+  // Use modulo to cycle through the colors
+  return colors[index % colors.length];
 }
 
 function CalendarDaySheet({
@@ -206,6 +252,13 @@ function CalendarDaySheet({
   onOpenChange: (value: boolean) => void;
 }) {
   const [create, setCreate] = useState<boolean>(false);
+  const params = useParams();
+
+  const projectId = params.projectId!;
+
+  const { data } = useProjectEvents(projectId);
+
+  const events = data?.[date] ?? [];
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -216,6 +269,29 @@ function CalendarDaySheet({
         </SheetHeader>
         {create ? (
           <CreateEventForm date={new Date(date)} />
+        ) : events.length > 0 ? (
+          <div className="flex-1 flex flex-col gap-2">
+            {events.map((event, index) => (
+              <div
+                key={event.id}
+                className={cn(
+                  "text-sm font-semibold font-sans text-white rounded-full px-4 py-2 inline-flex justify-between",
+                )}
+                style={{
+                  background: getEventBackground(index),
+                }}
+              >
+                <span>{event.title}</span>
+                {event.startTime && event.endTime && (
+                  <span>
+                    {format(event.startTime, "HH:mm")} -
+                    {format(event.endTime, "HH:mm")}
+                  </span>
+                )}
+                {event.allDay && <span>All day</span>}
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="flex-1 grid place-items-center">
             <span className="text-muted-foreground">No events this day</span>

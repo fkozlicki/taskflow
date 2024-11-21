@@ -64,7 +64,7 @@ export default function InviteToProjectDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="size-6" variant="ghost" size="icon">
+        <Button className="size-5" variant="ghost" size="icon">
           <PlusIcon />
           <span className="sr-only">Invite</span>
         </Button>

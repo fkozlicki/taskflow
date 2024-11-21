@@ -6,14 +6,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import pl.filipkozlicki.taskflow.event.dto.EventResponse;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
 import pl.filipkozlicki.taskflow.invitation.InvitationService;
 import pl.filipkozlicki.taskflow.project.dto.*;
 import pl.filipkozlicki.taskflow.user.User;
 
 import java.io.UnsupportedEncodingException;
+import java.util.EventObject;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -126,6 +129,20 @@ public class ProjectController {
         return projectService
                 .getById(id)
                 .map(ProjectTasksResponse::new)
+                .map(ResponseEntity::ok)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @GetMapping("/{id}/events")
+    public ResponseEntity<?> events(@PathVariable UUID id) {
+        return projectService
+                .getById(id)
+                .map(Project::getEvents)
+                .map(events -> events
+                        .stream()
+                        .map(EventResponse::new)
+                        .collect(Collectors.groupingBy(event -> event.getDate().toString()))
+                )
                 .map(ResponseEntity::ok)
                 .orElseThrow(ResourceNotFoundException::new);
     }

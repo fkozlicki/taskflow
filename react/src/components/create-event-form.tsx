@@ -15,6 +15,11 @@ import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { Switch } from "@/components/ui/switch.tsx";
 import TimePicker from "@/components/ui/time-picker.tsx";
+import { useCreateEvent } from "@/hooks/mutations/use-create-event.ts";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { LoaderIcon } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const createEventSchema = z.object({
   title: z.string().min(1),
@@ -37,10 +42,33 @@ export default function CreateEventForm({ date }: { date: Date }) {
       date,
     },
   });
+  const params = useParams();
+
+  const { mutate, isPending } = useCreateEvent();
 
   function onSubmit(values: CreateEventValues) {
-    console.log(values);
+    mutate(
+      { ...values, projectId: params.projectId! },
+      {
+        onSuccess() {
+          toast.success("Created event");
+          form.reset();
+        },
+        onError() {
+          toast.error("Something went wrong");
+        },
+      },
+    );
   }
+
+  const isAllDay = form.watch("allDay");
+
+  useEffect(() => {
+    if (isAllDay) {
+      form.unregister("startTime");
+      form.unregister("endTime");
+    }
+  }, [isAllDay]);
 
   return (
     <Form {...form}>
@@ -91,43 +119,49 @@ export default function CreateEventForm({ date }: { date: Date }) {
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    disabled
-                    aria-readonly
                   />
                 </FormControl>
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start time</FormLabel>
-                <FormControl>
-                  <TimePicker date={field.value} setDate={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>End time</FormLabel>
-                <FormControl>
-                  <TimePicker date={field.value} setDate={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!isAllDay && (
+            <>
+              <FormField
+                control={form.control}
+                name="startTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start time</FormLabel>
+                    <FormControl>
+                      <TimePicker date={field.value} setDate={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="endTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>End time</FormLabel>
+                    <FormControl>
+                      <TimePicker date={field.value} setDate={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
         </div>
 
-        <Button type="submit" className="w-full">
-          Submit
+        <Button disabled={isPending} type="submit" className="w-full">
+          {isPending ? (
+            <LoaderIcon className="size-4 animate-spin" />
+          ) : (
+            "Create event"
+          )}
         </Button>
       </form>
     </Form>
