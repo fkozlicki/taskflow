@@ -12,7 +12,7 @@ export default function TaskStatusBadge({
   return (
     <Badge
       variant="outline"
-      className="rounded-full"
+      className="rounded-full whitespace-nowrap"
       style={{
         borderColor: column.color,
         backgroundColor: `${column.color}20`,

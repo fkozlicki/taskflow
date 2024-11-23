@@ -7,8 +7,8 @@ export interface ProjectEvent {
   title: string;
   description: string | null;
   allDay: boolean;
-  startTime: string;
-  endTime: string;
+  startTime: string | null;
+  endTime: string | null;
 }
 
 const getProjectEvents = async (projectId: string) => {

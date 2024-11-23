@@ -6,8 +6,9 @@ import ProjectMembers from "@/components/project-members.tsx";
 import ProjectUpcomingEvents from "@/components/project-upcoming-events.tsx";
 
 export default function Project() {
-  const { projectId } = useParams();
-  const { data, isPending, isError } = useProject(projectId!);
+  const params = useParams();
+  const projectId = params.projectId!;
+  const { data, isPending, isError } = useProject(projectId);
 
   if (isPending) {
     return <div>Loading</div>;
@@ -17,7 +18,7 @@ export default function Project() {
     return <div>Error</div>;
   }
 
-  const { name, description, milestones } = data;
+  const { name, description } = data;
 
   return (
     <div>
@@ -29,7 +30,7 @@ export default function Project() {
         <p className="text-muted-foreground mt-1 text-lg">{description}</p>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <ProjectMilestones milestones={milestones} />
+        <ProjectMilestones projectId={projectId} />
         <ProjectMembers project={data} />
         <ProjectUpcomingEvents />
       </div>

@@ -25,8 +25,7 @@ public class UserService {
        return userRepository.findAllById(userIds);
     }
 
-    public User createUser(@Valid RegisterRequest registerRequest, String siteURL)
-            throws UnsupportedEncodingException, MessagingException {
+    public User createUser(@Valid RegisterRequest registerRequest) {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         String verificationCode = UUID.randomUUID().toString();
 
@@ -53,12 +52,12 @@ public class UserService {
                     .build();
         }
 
-        sendVerificationEmail(newUser, siteURL);
-
         return userRepository.save(newUser);
     }
 
+
     public User update(User user, UpdateUserRequest updateRequest) {
+        user.setName(updateRequest.getName());
 
         return userRepository.save(user);
     }
@@ -87,7 +86,7 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    private void sendVerificationEmail(User user, String siteURL)
+    public void sendVerificationEmail(User user, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
         String verifyURL = siteURL + "/verify?code=" + user.getVerificationCode();
 

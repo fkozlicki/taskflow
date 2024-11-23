@@ -17,12 +17,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JWTAuthFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
+    private final List<String> ALLOWED_PATHS = Arrays.asList("/api/users/login", "/api/users/register");
 
     private Cookie findAccessTokenCookie(Cookie[] cookies) {
         return Arrays
@@ -42,7 +44,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         final Cookie jwtCookie = cookies == null ? null : findAccessTokenCookie(cookies);
 
-        if (request.getServletPath().contains("/api/users/login") || request.getServletPath().contains("/api/users/register") || jwtCookie == null) {
+        if (ALLOWED_PATHS.stream().anyMatch(request.getServletPath()::contains) || jwtCookie == null) {
             filterChain.doFilter(request, response);
             return;
         }

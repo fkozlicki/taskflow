@@ -12,11 +12,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
-import { format, intervalToDuration } from "date-fns";
+import { format, intervalToDuration, startOfDay } from "date-fns";
 import TaskStatusBadge from "@/components/task-status-badge.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { UserIcon } from "lucide-react";
 import { Progress } from "@/components/ui/progress.tsx";
+import EditTaskForm from "@/components/edit-task-form.tsx";
 
 export default function TaskSheet({
   task,
@@ -32,7 +33,7 @@ export default function TaskSheet({
     end: task.dueDate,
   });
   const { days: passedDays } = intervalToDuration({
-    start: task.createdAt,
+    start: startOfDay(task.createdAt),
     end: new Date(),
   });
 
@@ -41,8 +42,8 @@ export default function TaskSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl">
-        <Tabs defaultValue="details">
-          <TabsList className="h-8">
+        <Tabs defaultValue="details" className="h-full flex flex-col">
+          <TabsList className="h-8 w-fit">
             <TabsTrigger value="details" className="text-xs">
               Details
             </TabsTrigger>
@@ -103,7 +104,9 @@ export default function TaskSheet({
               </div>
             </div>
           </TabsContent>
-          <TabsContent value="edit">Change your password here.</TabsContent>
+          <TabsContent value="edit" className="flex-1">
+            <EditTaskForm task={task} />
+          </TabsContent>
         </Tabs>
       </SheetContent>
     </Sheet>

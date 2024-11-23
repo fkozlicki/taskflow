@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import pl.filipkozlicki.taskflow.project.Project;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -28,4 +30,7 @@ public class Milestone {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

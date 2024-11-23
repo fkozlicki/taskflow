@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @JsonRootName("user")
 @Data
+@AllArgsConstructor
 public class RegisterRequest {
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email")

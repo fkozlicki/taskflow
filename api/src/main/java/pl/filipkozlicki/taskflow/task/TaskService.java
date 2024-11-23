@@ -3,6 +3,8 @@ package pl.filipkozlicki.taskflow.task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.filipkozlicki.taskflow.project.ProjectService;
+import pl.filipkozlicki.taskflow.task.dto.CreateTaskRequest;
+import pl.filipkozlicki.taskflow.task.dto.UpdateTaskRequest;
 import pl.filipkozlicki.taskflow.user.User;
 import pl.filipkozlicki.taskflow.user.UserService;
 
@@ -16,7 +18,7 @@ public class TaskService {
     private final ProjectService projectService;
     private final UserService userService;
 
-    public Task create(CreateTaskRequest taskRequest, User user) {
+    public Task create(CreateTaskRequest taskRequest) {
         List<User> users = userService.getUsersByIds(taskRequest.getUsers());
 
         Task newTask = Task
@@ -35,5 +37,16 @@ public class TaskService {
 
     public Optional<Task> getById(String id) {
         return taskRepository.findById(id);
+    }
+
+    public Task update(Task task, UpdateTaskRequest request) {
+        List<User> users = userService.getUsersByIds(request.getUsers());
+
+        task.setName(request.getName());
+        task.setDescription(request.getDescription());
+        task.setDueDate(request.getDueDate());
+        task.setUsers(users);
+
+        return taskRepository.save(task);
     }
 }

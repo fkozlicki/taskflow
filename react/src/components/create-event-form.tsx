@@ -23,7 +23,7 @@ import { useParams } from "react-router-dom";
 
 const createEventSchema = z.object({
   title: z.string().min(1),
-  description: z.string().optional(),
+  description: z.string(),
   date: z.date(),
   startTime: z.date().optional(),
   endTime: z.date().optional(),

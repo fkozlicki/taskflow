@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
 import { useCreateMilestone } from "@/hooks/mutations/use-create-milestone.ts";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const createMilestoneSchema = z.object({
   content: z.string().min(1),
@@ -42,10 +43,21 @@ export default function CreateMilestoneSheet() {
   const { mutate } = useCreateMilestone();
 
   function onSubmit(values: CreateMilestoneValues) {
-    mutate({
-      ...values,
-      projectId,
-    });
+    mutate(
+      {
+        ...values,
+        projectId,
+      },
+      {
+        onSuccess() {
+          toast.success("Created milestone");
+          form.reset();
+        },
+        onError() {
+          toast.error("Something went wrong.");
+        },
+      },
+    );
   }
 
   return (

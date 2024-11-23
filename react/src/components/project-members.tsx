@@ -7,8 +7,13 @@ import {
 } from "@/components/ui/card.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { UserIcon } from "lucide-react";
+import { ProjectDetails } from "@/hooks/queries/use-project.ts";
 
-export default function ProjectMembers({ project }) {
+export default function ProjectMembers({
+  project,
+}: {
+  project: ProjectDetails;
+}) {
   const { isOwner, members } = project;
 
   return (
@@ -17,12 +22,12 @@ export default function ProjectMembers({ project }) {
         <div className="flex items-center">
           <CardTitle>Members</CardTitle>
           <div className="bg-gray-400 text-xs w-4 h-4 ml-1.5 rounded grid place-items-center text-gray-100 font-semibold">
-            {0}
+            {members.length}
           </div>
         </div>
         {isOwner && <InviteToProjectDialog project={project} />}
       </CardHeader>
-      <CardContent className="p-3 min-h-48">
+      <CardContent className="p-3 min-h-48 flex flex-col gap-2">
         {members.map((member) => (
           <div key={member.id}>
             <div className="flex items-center gap-2">

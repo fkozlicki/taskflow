@@ -31,9 +31,12 @@ public class UserController {
             @Valid @RequestBody RegisterRequest registerRequest,
             @RequestHeader("Origin") String origin
     ) throws MessagingException, UnsupportedEncodingException {
-        userService.createUser(registerRequest, origin);
+        User user = userService.createUser(registerRequest);
+        userService.sendVerificationEmail(user, origin);
 
-        return ResponseEntity.status(201).body(new HashMap<>());
+        return ResponseEntity.status(201).body(new HashMap<>() {{
+            put("message", "Successfully created user");
+        }});
     }
 
     @PostMapping("/verify")

@@ -3,8 +3,6 @@ package pl.filipkozlicki.taskflow.chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pl.filipkozlicki.taskflow.project.Project;
-import pl.filipkozlicki.taskflow.user.User;
 
 import java.util.List;
 import java.util.Optional;

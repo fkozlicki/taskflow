@@ -190,7 +190,7 @@ function CalendarDay({ date, currentDate, events }: CalendarDayProps) {
   return (
     <div
       className={cn(
-        "aspect-square md:aspect-[3/2] pt-2 pb-10 px-3 font-mono text-lg relative transition-all duration-100 text-left flex flex-col select-none group cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950",
+        "aspect-square md:aspect-[3/2] p-2 font-mono text-lg relative transition-all duration-100 text-left flex flex-col select-none group cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950",
         isCurrentMonth && isToday(date)
           ? "bg-[#f0f0f0] dark:bg-[#202020]"
           : "bg-background",

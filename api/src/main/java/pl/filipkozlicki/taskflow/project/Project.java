@@ -12,7 +12,6 @@ import pl.filipkozlicki.taskflow.milestone.Milestone;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.user.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +46,7 @@ public class Project {
     private List<User> users;
 
     @OneToMany(mappedBy = "project")
+    @OrderBy("createdAt ASC")
     private List<Milestone> milestones;
 
     @OneToMany(mappedBy = "project")
