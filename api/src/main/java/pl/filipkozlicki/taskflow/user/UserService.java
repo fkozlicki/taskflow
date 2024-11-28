@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.filipkozlicki.taskflow.auth.dto.RegisterRequest;
+import pl.filipkozlicki.taskflow.user.dto.UpdateUserRequest;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -21,61 +23,52 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
 
+
     public List<User> getUsersByIds(List<UUID> userIds) {
        return userRepository.findAllById(userIds);
     }
 
-    public User createUser(@Valid RegisterRequest registerRequest) {
+    public User create(@Valid RegisterRequest registerRequest) {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         String verificationCode = UUID.randomUUID().toString();
 
-        User existingUser = userRepository
-                .findByEmail(registerRequest.getEmail())
-                .orElse(null);
-
-        User newUser;
-
-        if (existingUser != null && !existingUser.isEnabled()) {
-            existingUser.setName(registerRequest.getName());
-            existingUser.setPassword(encodedPassword);
-            existingUser.setVerificationCode(verificationCode);
-
-            newUser = existingUser;
-        } else {
-            newUser = User
-                    .builder()
-                    .name(registerRequest.getName())
-                    .email(registerRequest.getEmail())
-                    .password(encodedPassword)
-                    .verificationCode(verificationCode)
-                    .enabled(false)
-                    .build();
-        }
+        User newUser = User
+                .builder()
+                .name(registerRequest.getName())
+                .email(registerRequest.getEmail())
+                .password(encodedPassword)
+                .verificationCode(verificationCode)
+                .enabled(false)
+                .build();
 
         return userRepository.save(newUser);
     }
 
 
     public User update(User user, UpdateUserRequest updateRequest) {
-        user.setName(updateRequest.getName());
+
+        if (updateRequest.getName() != null) {
+
+            user.setName(updateRequest.getName());
+        }
+
+        if (updateRequest.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+        }
+
+        if (updateRequest.getVerificationCode() != null) {
+            user.setVerificationCode(updateRequest.getVerificationCode());
+        }
+
+        if (updateRequest.getEnabled() != null) {
+            user.setEnabled(updateRequest.getEnabled());
+        }
 
         return userRepository.save(user);
     }
 
-    public boolean verify(String code) {
-        User user = userRepository
-                .findByVerificationCode(code)
-                .orElse(null);
-
-        if (user == null || user.isEnabled()) {
-            return false;
-        } else {
-            user.setVerificationCode(null);
-            user.setEnabled(true);
-            userRepository.save(user);
-
-            return true;
-        }
+    public Optional<User> getByCode(String code) {
+        return userRepository.findByVerificationCode(code);
     }
 
     public Optional<User> getByEmail(String email) {

@@ -2,7 +2,7 @@ package pl.filipkozlicki.taskflow.task.dto;
 
 import lombok.Data;
 import pl.filipkozlicki.taskflow.task.Task;
-import pl.filipkozlicki.taskflow.user.UserDTO;
+import pl.filipkozlicki.taskflow.user.dto.UserResponse;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -16,7 +16,7 @@ public class TaskResponse {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime dueDate;
-    private Set<UserDTO> users;
+    private Set<UserResponse> users;
 
     public TaskResponse(Task task) {
         this.id = task.getId();
@@ -29,7 +29,7 @@ public class TaskResponse {
                 .getUsers()
                 .stream()
                 .map(
-                        user -> UserDTO
+                        user -> UserResponse
                                 .builder()
                                 .id(user.getId())
                                 .name(user.getName())

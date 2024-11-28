@@ -7,7 +7,7 @@ interface SignUpPayload {
 }
 
 async function signUp(values: SignUpPayload) {
-  return await axiosInstance.post("/users/register", values);
+  return await axiosInstance.post("/auth/register", values);
 }
 
 export function useSignUp() {

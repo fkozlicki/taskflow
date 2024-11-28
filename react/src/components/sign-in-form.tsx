@@ -15,7 +15,6 @@ import { useSignIn } from "@/hooks/mutations/use-sign-in.ts";
 import { LoaderIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 
 const signInSchema = z.object({
   email: z.string().min(1, "Email is required").email(),
@@ -32,7 +31,6 @@ export default function SignInForm() {
       password: "",
     },
   });
-  const navigate = useNavigate();
 
   const { mutate, isPending } = useSignIn();
   const queryClient = useQueryClient();
@@ -42,7 +40,7 @@ export default function SignInForm() {
       onSuccess: ({ data }) => {
         queryClient.setQueryData(["session"], data);
         toast.success("Signed in");
-        navigate(-1);
+        window.location.reload();
       },
       onError: () => {
         toast.error("Couldn't sign in");
@@ -58,9 +56,13 @@ export default function SignInForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="john.doe@example.com" {...field} />
+                <Input
+                  type="email"
+                  placeholder="john.doe@example.com"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

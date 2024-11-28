@@ -14,7 +14,7 @@ export default function DashboardSidebar() {
 
   return (
     <Sidebar>
-      <div className="flex flex-col mt-4 flex-1">
+      <div className="flex flex-col flex-1">
         {links.map((link) => (
           <Button
             asChild

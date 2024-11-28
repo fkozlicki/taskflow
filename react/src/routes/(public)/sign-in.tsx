@@ -1,8 +1,7 @@
 import SignInForm from "@/components/sign-in-form.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button.tsx";
-import { icons } from "@/components/icons.tsx";
+import OAuthLinks from "@/components/oauth-links.tsx";
 
 export default function SignIn() {
   return (
@@ -22,28 +21,16 @@ export default function SignIn() {
           <p className="text-muted-foreground mb-8">
             Please log in into your account to continue
           </p>
-
           <SignInForm />
-
           <p className="text-center my-4 text-sm">
             Don't have an account?
             <Link className="text-blue-600 hover:underline ml-2" to="/sign-up">
               Sign up
             </Link>
           </p>
-
           <Separator className="my-8" />
 
-          <div className="flex gap-4">
-            <Button className="flex-1" variant="outline" size="lg">
-              <icons.Google className="size-4 mr-2" />
-              Google
-            </Button>
-            <Button className="flex-1" variant="outline" size="lg">
-              <icons.Github className="size-4 mr-2" />
-              Github
-            </Button>
-          </div>
+          <OAuthLinks />
 
           <Link
             to="/"

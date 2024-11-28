@@ -31,6 +31,7 @@ import {
   ProjectEvent,
   useProjectEvents,
 } from "@/hooks/queries/use-project-events.ts";
+import { useMediaQuery } from "@/hooks/use-media-query.ts";
 
 function useCalendarDates(currentDate: Date, weekStartsOnMonday: boolean) {
   const monthStart = startOfMonth(currentDate);
@@ -184,6 +185,7 @@ function CalendarDay({ date, currentDate, events }: CalendarDayProps) {
   const isCurrentMonth = date.getMonth() === currentDate.getMonth();
   const formattedDate = formatISO(date, { representation: "date" });
   const [params, setSearchParams] = useSearchParams();
+  const isDesktop = useMediaQuery("(min-width: 1440px)");
 
   const slicedEvents = events.length > 3 ? events.slice(0, 2) : events;
 
@@ -204,33 +206,43 @@ function CalendarDay({ date, currentDate, events }: CalendarDayProps) {
       }}
     >
       <div className="group-hover:underline mb-2">{format(date, "d")}</div>
-      <div className="flex flex-col gap-1">
-        {slicedEvents.map((event, index) => (
-          <div
-            key={event.id}
-            className={cn(
-              "text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 inline-flex justify-between",
-            )}
-            style={{
-              background: getEventBackground(index),
-            }}
-          >
-            <span>{event.title}</span>
-            {event.startTime && event.endTime && (
-              <span>
-                {format(event.startTime, "HH:mm")} -
-                {format(event.endTime, "HH:mm")}
-              </span>
-            )}
-            {event.allDay && <span>All day</span>}
-          </div>
-        ))}
-        {events.length > 3 && (
-          <div className="text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 bg-slate-400">
-            +{events.length - 2} events
-          </div>
-        )}
-      </div>
+      {events.length > 0 && (
+        <>
+          {isDesktop ? (
+            <div className="flex flex-col gap-1">
+              {slicedEvents.map((event, index) => (
+                <div
+                  key={event.id}
+                  className={cn(
+                    "text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 inline-flex justify-between",
+                  )}
+                  style={{
+                    background: getEventBackground(index),
+                  }}
+                >
+                  <span className="line-clamp-1">{event.title}</span>
+                  {event.startTime && event.endTime && (
+                    <span className="shrink-0">
+                      {format(event.startTime, "HH:mm")} -
+                      {format(event.endTime, "HH:mm")}
+                    </span>
+                  )}
+                  {event.allDay && <span className="shrink-0">All day</span>}
+                </div>
+              ))}
+              {events.length > 3 && (
+                <div className="text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 bg-slate-400">
+                  +{events.length - 2} events
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className="text-xs font-semibold font-sans text-white rounded-full px-2 py-0.5 bg-slate-400">
+              {events.length} events
+            </span>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -268,7 +280,10 @@ function CalendarDaySheet({
           <SheetDescription>Events & activities</SheetDescription>
         </SheetHeader>
         {create ? (
-          <CreateEventForm date={new Date(date)} />
+          <CreateEventForm
+            date={new Date(date)}
+            onSuccess={() => setCreate(false)}
+          />
         ) : events.length > 0 ? (
           <div className="flex-1 flex flex-col gap-2">
             {events.map((event, index) => (

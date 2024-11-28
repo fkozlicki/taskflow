@@ -32,7 +32,13 @@ const createEventSchema = z.object({
 
 type CreateEventValues = z.infer<typeof createEventSchema>;
 
-export default function CreateEventForm({ date }: { date: Date }) {
+export default function CreateEventForm({
+  date,
+  onSuccess,
+}: {
+  date: Date;
+  onSuccess: () => void;
+}) {
   const form = useForm<CreateEventValues>({
     resolver: zodResolver(createEventSchema),
     defaultValues: {
@@ -53,6 +59,7 @@ export default function CreateEventForm({ date }: { date: Date }) {
         onSuccess() {
           toast.success("Created event");
           form.reset();
+          onSuccess();
         },
         onError() {
           toast.error("Something went wrong");

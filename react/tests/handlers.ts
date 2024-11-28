@@ -6,7 +6,7 @@ export const handlers = [
   http.get("**/milestones", () => {
     return HttpResponse.json(milestones);
   }),
-  http.get("*/users/session", () => {
+  http.get("*/auth/session", () => {
     return HttpResponse.json(session);
   }),
   http.get("*/users", () => {

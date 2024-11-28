@@ -1,8 +1,7 @@
 import SignUpForm from "@/components/sign-up-form.tsx";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { icons } from "@/components/icons";
+import OAuthLinks from "@/components/oauth-links.tsx";
 
 export default function SignUp() {
   return (
@@ -33,16 +32,7 @@ export default function SignUp() {
 
           <Separator className="my-8" />
 
-          <div className="flex gap-4">
-            <Button className="flex-1" variant="outline" size="lg">
-              <icons.Google className="size-4 mr-2" />
-              Google
-            </Button>
-            <Button className="flex-1" variant="outline" size="lg">
-              <icons.Github className="size-4 mr-2" />
-              Github
-            </Button>
-          </div>
+          <OAuthLinks />
 
           <Link
             to="/"

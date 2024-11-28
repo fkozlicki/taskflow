@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.filipkozlicki.taskflow.security.JWTAuthFilter;
+import pl.filipkozlicki.taskflow.security.OAuth2SuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +22,7 @@ import pl.filipkozlicki.taskflow.security.JWTAuthFilter;
 public class SecurityFilterChainConfig {
     private final JWTAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final OAuth2SuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,16 +31,13 @@ public class SecurityFilterChainConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/users/login",
-                                "/api/users/register",
-                                "/api/users/verify",
-                                "/api/users/session",
-                                "/login/oauth2/code/**",
+                                "/api/auth/**",
                                 "/ws/**"
                         ).permitAll()
                         .requestMatchers("/api/**")
                         .authenticated()
                 )
+                .oauth2Login(oauth2 -> oauth2.successHandler(successHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

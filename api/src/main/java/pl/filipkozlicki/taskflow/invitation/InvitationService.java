@@ -7,7 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import pl.filipkozlicki.taskflow.project.InviteRequest;
+import pl.filipkozlicki.taskflow.project.dto.InviteRequest;
 import pl.filipkozlicki.taskflow.project.Project;
 import pl.filipkozlicki.taskflow.user.User;
 

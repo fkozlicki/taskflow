@@ -10,6 +10,7 @@ import pl.filipkozlicki.taskflow.invitation.InvitationRepository;
 import pl.filipkozlicki.taskflow.invitation.InvitationService;
 import pl.filipkozlicki.taskflow.project.dto.CreateProjectRequest;
 import pl.filipkozlicki.taskflow.project.dto.ReorderRequest;
+import pl.filipkozlicki.taskflow.project.dto.UpdateProjectRequest;
 import pl.filipkozlicki.taskflow.task.Task;
 import pl.filipkozlicki.taskflow.task.TaskRepository;
 import pl.filipkozlicki.taskflow.user.User;

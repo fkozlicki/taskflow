@@ -1,19 +1,19 @@
-import {useQuery} from "@tanstack/react-query";
-import {axiosInstance} from "@/lib/axios.ts";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "@/lib/axios.ts";
 
 interface User {
-    id: string;
-    name: string;
-    email: string;
+  id: string;
+  name: string;
+  email: string;
 }
 
 async function getSession() {
-    return (await axiosInstance.get<User>('/users/session')).data
+  return (await axiosInstance.get<User>("/auth/session")).data;
 }
 
 export function useSession() {
-    return useQuery({
-        queryKey: ['session'],
-        queryFn: getSession
-    })
+  return useQuery({
+    queryKey: ["session"],
+    queryFn: getSession,
+  });
 }

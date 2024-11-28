@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import pl.filipkozlicki.taskflow.chat.dto.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
 import pl.filipkozlicki.taskflow.message.MessageService;
 import pl.filipkozlicki.taskflow.user.User;

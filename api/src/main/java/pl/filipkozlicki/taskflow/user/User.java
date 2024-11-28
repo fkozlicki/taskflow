@@ -55,7 +55,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "inviter")
     private List<Invitation> invitations;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

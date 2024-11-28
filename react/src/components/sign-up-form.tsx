@@ -13,6 +13,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignUp } from "@/hooks/mutations/use-sign-up.ts";
 import { toast } from "sonner";
+import axios, { AxiosError } from "axios";
+import { LoaderIcon } from "lucide-react";
 
 const signUpSchema = z.object({
   email: z.string().min(1, "Email is required").email(),
@@ -28,10 +30,11 @@ export default function SignUpForm() {
     defaultValues: {
       email: "",
       password: "",
+      name: "",
     },
   });
 
-  const { mutate } = useSignUp();
+  const { mutate, isPending } = useSignUp();
 
   function onSubmit(values: SignUpValues) {
     mutate(values, {
@@ -39,8 +42,12 @@ export default function SignUpForm() {
         toast.success("Signed up. Verify your email.");
         form.reset();
       },
-      onError() {
-        toast.error("Something went wrong. Try again.");
+      onError(error: Error | AxiosError) {
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data.errors[0].detail);
+        } else {
+          toast.error("Something went wrong. Try again.");
+        }
       },
     });
   }
@@ -88,8 +95,9 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Submit
+        <Button disabled={isPending} type="submit" className="w-full">
+          {isPending && <LoaderIcon className="size-4 animate-spin" />}
+          Register
         </Button>
       </form>
     </Form>

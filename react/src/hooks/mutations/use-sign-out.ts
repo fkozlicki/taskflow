@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 async function signOut() {
-  return await axiosInstance.get("/users/logout");
+  return await axiosInstance.get("/auth/logout");
 }
 
 export function useSignOut() {

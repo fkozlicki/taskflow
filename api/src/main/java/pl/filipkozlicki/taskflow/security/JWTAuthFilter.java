@@ -24,7 +24,7 @@ import java.util.List;
 public class JWTAuthFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
-    private final List<String> ALLOWED_PATHS = Arrays.asList("/api/users/login", "/api/users/register");
+    private final List<String> ALLOWED_PATHS = Arrays.asList("/api/auth/login", "/api/auth/register");
 
     private Cookie findAccessTokenCookie(Cookie[] cookies) {
         return Arrays
