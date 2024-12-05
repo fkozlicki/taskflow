@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -24,6 +25,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final OAuth2AuthorizedClientService authorizedClientService;
     private final UserService userService;
     private final UserRepository userRepository;
+    @Value("${application.jwt-expiration}")
+    private int jwtExpiration;
+    @Value("${application.client-url}")
+    private String clientUrl;
+
 
     @Override
     public void onAuthenticationSuccess(
@@ -69,9 +75,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Cookie jwtCookie = new Cookie("accessToken", token);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(3600); // 1 hour
+        jwtCookie.setMaxAge(jwtExpiration);
         response.addCookie(jwtCookie);
 
-        response.sendRedirect("http://localhost:5173/dashboard");
+        response.sendRedirect(String.format("%s/dashboard", clientUrl));
     }
 }
