@@ -36,8 +36,10 @@ export default function ChatLayout() {
 
   const users = data?.members.filter((u) => u.id !== user?.id) ?? [];
 
+  const socketURL = `${import.meta.env.VITE_API_URL}/ws`;
+
   return (
-    <StompSessionProvider url="http://localhost:8080/ws">
+    <StompSessionProvider url={socketURL}>
       <div className="h-full flex flex-col">
         <span className="text-3xl font-semibold inline-block mb-6">Chat</span>
         <div className="bg-background border rounded-lg flex flex-1 max-h-full overflow-hidden">
