@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 export interface Message {
   id: string;
@@ -23,11 +23,9 @@ const getMessages = async ({
   id: string;
   pageParam: string;
 }) => {
-  return (
-    await axiosInstance.get<PageMessages>(
-      `/chats/${id}/messages?size=10&cursor=${pageParam}`,
-    )
-  ).data;
+  return await api.get<PageMessages>(
+    `/chats/${id}/messages?size=10&cursor=${pageParam}`,
+  );
 };
 
 export function useChatMessages(id: string) {

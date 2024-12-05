@@ -1,9 +1,9 @@
-import { axiosInstance } from "@/lib/axios.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { api } from "@/lib/api.ts";
 
 async function signOut() {
-  return await axiosInstance.get("/auth/logout");
+  return await api.get("/auth/logout");
 }
 
 export function useSignOut() {

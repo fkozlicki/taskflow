@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 interface User {
   id: string;
@@ -8,7 +8,7 @@ interface User {
 }
 
 async function getSession() {
-  return (await axiosInstance.get<User>("/auth/session")).data;
+  return await api.get<User>("/auth/session");
 }
 
 export function useSession() {

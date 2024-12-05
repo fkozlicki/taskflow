@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
 import { Milestone } from "@/hooks/queries/use-milestones.ts";
+import { api } from "@/lib/api.ts";
 
 interface CreateMilestonePayload {
   projectId: string;
@@ -8,7 +8,7 @@ interface CreateMilestonePayload {
 }
 
 const createMilestone = async (payload: CreateMilestonePayload) => {
-  return (await axiosInstance.post(`/milestones`, payload)).data;
+  return await api.post(`/milestones`, payload);
 };
 
 export function useCreateMilestone() {

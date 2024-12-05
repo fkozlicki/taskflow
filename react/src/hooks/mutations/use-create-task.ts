@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
 import { Task } from "@/hooks/queries/use-project-tasks.ts";
 import { useParams } from "react-router-dom";
+import { api } from "@/lib/api.ts";
 
 interface TaskPayload {
   name: string;
@@ -13,7 +13,7 @@ interface TaskPayload {
 }
 
 async function createTask(task: TaskPayload) {
-  return (await axiosInstance.post("/tasks", task)).data;
+  return await api.post("/tasks", task);
 }
 
 export function useCreateTask() {

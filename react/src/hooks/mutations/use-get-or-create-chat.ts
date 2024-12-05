@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 interface CreateChatPayload {
   userId: string;
@@ -7,7 +7,7 @@ interface CreateChatPayload {
 }
 
 const createChat = async (payload: CreateChatPayload) => {
-  return (await axiosInstance.post<{ id: string }>("/chats", payload)).data;
+  return await api.post<{ id: string }>("/chats", payload);
 };
 
 export function useGetOrCreateChat() {

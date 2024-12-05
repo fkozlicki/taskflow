@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 interface CreateProjectPayload {
   name: string;
@@ -7,7 +7,7 @@ interface CreateProjectPayload {
 }
 
 const createProject = async (payload: CreateProjectPayload) => {
-  return (await axiosInstance.post("/projects", payload)).data;
+  return await api.post("/projects", payload);
 };
 
 export function useCreateProject() {

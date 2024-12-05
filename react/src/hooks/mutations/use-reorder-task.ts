@@ -1,6 +1,6 @@
-import { axiosInstance } from "@/lib/axios.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Task } from "@/hooks/queries/use-project-tasks.ts";
+import { api } from "@/lib/api.ts";
 
 interface ReorderPayload {
   id: string;
@@ -13,7 +13,7 @@ async function reorderTask(payload: ReorderPayload) {
   const { projectId, ...data } = payload;
 
   return (
-    await axiosInstance.patch<Record<string, Task[]>>(
+    await api.patch<Record<string, Task[]>>(
       `/projects/${projectId}/tasks/reorder`,
       data,
     )

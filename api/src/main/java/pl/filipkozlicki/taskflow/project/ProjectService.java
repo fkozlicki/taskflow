@@ -8,6 +8,8 @@ import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
 import pl.filipkozlicki.taskflow.invitation.Invitation;
 import pl.filipkozlicki.taskflow.invitation.InvitationRepository;
 import pl.filipkozlicki.taskflow.invitation.InvitationService;
+import pl.filipkozlicki.taskflow.notification.Notification;
+import pl.filipkozlicki.taskflow.notification.NotificationService;
 import pl.filipkozlicki.taskflow.project.dto.CreateProjectRequest;
 import pl.filipkozlicki.taskflow.project.dto.ReorderRequest;
 import pl.filipkozlicki.taskflow.project.dto.UpdateProjectRequest;
@@ -27,6 +29,7 @@ public class ProjectService {
     private final TaskRepository taskRepository;
     private final InvitationService invitationService;
     private final InvitationRepository invitationRepository;
+    private final NotificationService notificationService;
 
     public Project joinWithToken(String token, User user) {
         Invitation invitation = invitationService
@@ -113,7 +116,21 @@ public class ProjectService {
         }
     }
 
-    public String generateUniqueCode() {
+    public void sendJoinNotification(User user, Project project) {
+        notificationService.send(Notification
+                .builder()
+                .title("Welcome to the Project")
+                .message(String.format("You have joined the %s project. " +
+                        "You can now explore the features of it.", project.getName())
+                )
+                .read(false)
+                .user(user)
+                .build()
+        );
+    }
+
+
+    private String generateUniqueCode() {
         String code;
 
         do {
@@ -122,6 +139,7 @@ public class ProjectService {
 
         return code;
     }
+
 
     private void reorderWithinSameStatus(Task task, ReorderRequest reorderRequest) {
         String status = task.getStatus();
@@ -139,7 +157,7 @@ public class ProjectService {
         taskRepository.save(task);
     }
 
-    private void reorderAcrossStatuses(Task task, ReorderRequest reorderRequest) {
+    private void  reorderAcrossStatuses(Task task, ReorderRequest reorderRequest) {
         String currentStatus = task.getStatus();
         int currentPosition = task.getPosition();
 

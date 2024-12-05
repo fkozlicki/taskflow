@@ -23,7 +23,7 @@ public class MilestoneController {
         return ResponseEntity.ok(new MilestoneResponse(milestone));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> update(
             @PathVariable UUID id,
             @RequestBody UpdateMilestoneRequest request

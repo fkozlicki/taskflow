@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 export interface ProjectEvent {
   id: string;
@@ -12,11 +12,9 @@ export interface ProjectEvent {
 }
 
 const getProjectEvents = async (projectId: string) => {
-  return (
-    await axiosInstance.get<Record<string, ProjectEvent[]>>(
-      `/projects/${projectId}/events`,
-    )
-  ).data;
+  return await api.get<Record<string, ProjectEvent[]>>(
+    `/projects/${projectId}/events`,
+  );
 };
 
 export function useProjectEvents(projectId: string) {

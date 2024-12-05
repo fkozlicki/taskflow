@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 export interface Milestone {
   id: string;
@@ -8,9 +8,7 @@ export interface Milestone {
 }
 
 const getMilestones = async (projectId: string) => {
-  return (
-    await axiosInstance.get<Milestone[]>(`/projects/${projectId}/milestones`)
-  ).data;
+  return await api.get<Milestone[]>(`/projects/${projectId}/milestones`);
 };
 
 export function useMilestones(projectId: string) {

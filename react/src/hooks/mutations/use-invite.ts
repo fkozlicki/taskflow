@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 interface InvitePayload {
   projectId: string;
@@ -9,7 +9,7 @@ interface InvitePayload {
 const invite = async (payload: InvitePayload) => {
   const { projectId, ...data } = payload;
 
-  return (await axiosInstance.post(`/projects/${projectId}/invite`, data)).data;
+  return await api.post(`/projects/${projectId}/invite`, data);
 };
 
 export function useInvite() {

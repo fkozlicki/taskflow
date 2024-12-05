@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 interface SignInPayload {
   email: string;
@@ -13,7 +13,7 @@ interface SignInResponse {
 }
 
 async function signIn(values: SignInPayload) {
-  return await axiosInstance.post<SignInResponse>("/auth/login", values);
+  return await api.post<SignInResponse>("/auth/login", values);
 }
 
 export function useSignIn() {

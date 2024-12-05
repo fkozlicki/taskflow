@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 export interface Project {
   id: string;
@@ -7,7 +7,7 @@ export interface Project {
 }
 
 async function getProjects() {
-  return (await axiosInstance.get<Project[]>("/projects")).data;
+  return await api.get<Project[]>("/projects");
 }
 
 export function useProjects() {

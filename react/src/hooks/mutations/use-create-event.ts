@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
 import { ProjectEvent } from "@/hooks/queries/use-project-events.ts";
 import { formatISO } from "date-fns";
+import { api } from "@/lib/api.ts";
 
 interface EventPayload {
   projectId: string;
@@ -14,7 +14,7 @@ interface EventPayload {
 }
 
 const createEvent = async (payload: EventPayload) => {
-  return (await axiosInstance.post("/events", payload)).data;
+  return await api.post("/events", payload);
 };
 
 export function useCreateEvent() {

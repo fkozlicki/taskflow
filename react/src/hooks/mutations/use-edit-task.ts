@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
 import { useParams } from "react-router-dom";
 import { Task } from "@/hooks/queries/use-project-tasks.ts";
+import { api } from "@/lib/api.ts";
 
 interface EditTaskPayload {
   id: string;
@@ -14,7 +14,7 @@ interface EditTaskPayload {
 
 const editTask = async (payload: EditTaskPayload) => {
   const { id, ...data } = payload;
-  return (await axiosInstance.put(`/tasks/${id}`, data)).data;
+  return await api.patch(`/tasks/${id}`, data);
 };
 
 export function useEditTask() {

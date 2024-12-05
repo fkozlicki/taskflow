@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
+import { api } from "@/lib/api.ts";
 
 interface EditProjectPayload {
   name: string;
@@ -7,17 +7,17 @@ interface EditProjectPayload {
   id: string;
 }
 
-const createProject = async (payload: EditProjectPayload) => {
+const editProject = async (payload: EditProjectPayload) => {
   const { id, ...data } = payload;
 
-  return (await axiosInstance.put(`/projects/${id}`, data)).data;
+  return await api.patch(`/projects/${id}`, data);
 };
 
 export function useEditProject() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createProject,
+    mutationFn: editProject,
     onSuccess(_, payload) {
       void queryClient.invalidateQueries({ queryKey: ["projects"] });
       void queryClient.invalidateQueries({ queryKey: ["project", payload.id] });

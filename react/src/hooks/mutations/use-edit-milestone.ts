@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios.ts";
 import { useParams } from "react-router-dom";
 import { Milestone } from "@/hooks/queries/use-milestones.ts";
+import { api } from "@/lib/api.ts";
 
 interface EditMilestonePayload {
   id: string;
@@ -10,7 +10,7 @@ interface EditMilestonePayload {
 
 const editMilestone = async (payload: EditMilestonePayload) => {
   const { id, ...data } = payload;
-  return (await axiosInstance.put(`/milestones/${id}`, data)).data;
+  return await api.patch(`/milestones/${id}`, data);
 };
 
 export function useEditMilestone() {

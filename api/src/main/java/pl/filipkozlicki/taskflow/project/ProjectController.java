@@ -57,7 +57,7 @@ public class ProjectController {
                 .body(new CreateProjectResponse(project));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> update(
             @PathVariable UUID id,
             @RequestBody UpdateProjectRequest projectRequest
@@ -164,6 +164,8 @@ public class ProjectController {
 
 
         if (project != null) {
+            projectService.sendJoinNotification(user, project);
+
             return ResponseEntity.ok(new ProjectResponse(project));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid project code or user is already a member.");
