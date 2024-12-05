@@ -37,7 +37,7 @@ export default function SignInForm() {
 
   function onSubmit(values: SignInValues) {
     mutate(values, {
-      onSuccess: ({ data }) => {
+      onSuccess: (data) => {
         queryClient.setQueryData(["session"], data);
         toast.success("Signed in");
         window.location.reload();
