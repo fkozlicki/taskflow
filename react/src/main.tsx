@@ -6,7 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import { ThemeProvider } from "next-themes";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
