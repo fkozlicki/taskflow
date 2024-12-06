@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,6 +29,8 @@ public class AuthService {
     private final UserService userService;
     private final JWTService jwtService;
     private final JavaMailSender mailSender;
+    @Value("${application.jwt-expiration}")
+    private int jwtExpiration;
 
     public User register(@Valid RegisterRequest registerRequest) {
         User existingUser = userService.getByEmail(registerRequest.getEmail()).orElse(null);
@@ -62,9 +65,10 @@ public class AuthService {
 
         ResponseCookie cookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
+                .sameSite("None")
                 .path("/")
-                .maxAge(10080)
+                .maxAge(jwtExpiration)
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

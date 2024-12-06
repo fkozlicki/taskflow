@@ -1,10 +1,11 @@
 package pl.filipkozlicki.taskflow.security;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -72,11 +73,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String token = jwtService.generateToken(user);
 
-        Cookie jwtCookie = new Cookie("accessToken", token);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(jwtExpiration);
-        response.addCookie(jwtCookie);
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(jwtExpiration)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         response.sendRedirect(String.format("%s/dashboard", clientUrl));
     }
