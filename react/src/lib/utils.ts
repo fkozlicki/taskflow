@@ -12,3 +12,7 @@ export function arrayRemove<T>(array: T[], index: number) {
 export function arrayInsert<T>(array: T[], index: number, value: T) {
   return [...array.slice(0, index), value, ...array.slice(index)];
 }
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
