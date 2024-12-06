@@ -6,3 +6,5 @@ export const columns = [
 ];
 
 export type Column = (typeof columns)[number];
+
+export const publicRoutes = ["/", "/sign-up", "/sign-in", "/verify"];

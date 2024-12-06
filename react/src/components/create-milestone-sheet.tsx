@@ -23,6 +23,7 @@ import { PlusIcon } from "lucide-react";
 import { useCreateMilestone } from "@/hooks/mutations/use-create-milestone.ts";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const createMilestoneSchema = z.object({
   content: z.string().min(1),
@@ -31,6 +32,7 @@ const createMilestoneSchema = z.object({
 type CreateMilestoneValues = z.infer<typeof createMilestoneSchema>;
 
 export default function CreateMilestoneSheet() {
+  const [open, setOpen] = useState(false);
   const form = useForm<CreateMilestoneValues>({
     resolver: zodResolver(createMilestoneSchema),
     defaultValues: {
@@ -43,16 +45,15 @@ export default function CreateMilestoneSheet() {
   const { mutate } = useCreateMilestone();
 
   function onSubmit(values: CreateMilestoneValues) {
+    form.reset();
+    setOpen(false);
+
     mutate(
       {
         ...values,
         projectId,
       },
       {
-        onSuccess() {
-          toast.success("Created milestone");
-          form.reset();
-        },
         onError() {
           toast.error("Something went wrong.");
         },
@@ -61,7 +62,7 @@ export default function CreateMilestoneSheet() {
   }
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="size-5">
           <PlusIcon />

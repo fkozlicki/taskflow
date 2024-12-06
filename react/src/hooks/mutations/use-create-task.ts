@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Task } from "@/hooks/queries/use-project-tasks.ts";
 import { useParams } from "react-router-dom";
 import { api } from "@/lib/api.ts";
+import { ProjectDetails } from "@/hooks/queries/use-project.ts";
 
 interface TaskPayload {
   name: string;
@@ -10,6 +11,7 @@ interface TaskPayload {
   dueDate: Date;
   projectId: string;
   position: number;
+  users: string[];
 }
 
 async function createTask(task: TaskPayload) {
@@ -35,19 +37,30 @@ export function useCreateTask() {
         projectId,
       ]);
 
+      const project = queryClient.getQueryData<ProjectDetails>([
+        "project",
+        projectId,
+      ]);
+
+      const members = (project?.members ?? []).filter((member) =>
+        newTask.users.includes(member.id),
+      );
+
       queryClient.setQueryData(
         ["project_tasks", projectId],
-        (old: Record<string, Task[]>) => {
-          old[newTask.status].push({
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            users: [],
-            ...newTask,
-            dueDate: newTask.dueDate.toISOString(),
-          });
-
-          return old;
-        },
+        (old: Record<string, Task[]>) => ({
+          ...old,
+          [newTask.status]: [
+            ...(old[newTask.status] ?? []),
+            {
+              ...newTask,
+              id: crypto.randomUUID(),
+              createdAt: new Date().toISOString(),
+              users: members,
+              dueDate: newTask.dueDate.toISOString(),
+            },
+          ],
+        }),
       );
 
       return { previousTasks };

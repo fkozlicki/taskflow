@@ -90,12 +90,10 @@ export default function CreateTaskSheet({
   const { mutate } = useCreateTask();
 
   function onSubmit(values: CreateTaskValues) {
+    form.reset();
+    onOpenChange(false);
+
     mutate(values, {
-      onSuccess() {
-        toast.success("Created task");
-        form.reset();
-        onOpenChange(false);
-      },
       onError() {
         toast.error("Something went wrong. Try again.");
       },
