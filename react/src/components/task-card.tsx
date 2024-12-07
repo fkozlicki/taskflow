@@ -54,7 +54,6 @@ export default function TaskCard({
       <Card
         className={cn(
           "select-none",
-          isOverlay && "",
           isDragging && "opacity-40",
           isOverlay && "ring-2",
         )}

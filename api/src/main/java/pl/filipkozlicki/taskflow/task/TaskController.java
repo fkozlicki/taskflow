@@ -2,13 +2,11 @@ package pl.filipkozlicki.taskflow.task;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.filipkozlicki.taskflow.exception.ResourceNotFoundException;
 import pl.filipkozlicki.taskflow.task.dto.CreateTaskRequest;
 import pl.filipkozlicki.taskflow.task.dto.TaskResponse;
 import pl.filipkozlicki.taskflow.task.dto.UpdateTaskRequest;
-import pl.filipkozlicki.taskflow.user.User;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -27,7 +25,7 @@ public class TaskController {
                 .body(new TaskResponse(task));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<TaskResponse> update(
             @PathVariable String id,
             @RequestBody UpdateTaskRequest request
