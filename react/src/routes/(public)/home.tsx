@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button.tsx";
 import { Link } from "react-router-dom";
+import Showcase from "@/components/showcase.tsx";
 
 export default function Home() {
   return (
@@ -19,7 +20,9 @@ export default function Home() {
             </Button>
           </div>
         </div>
-        <div className="aspect-square bg-accent flex-1">Hero image</div>
+        <div className="aspect-square flex-1 grid place-items-center">
+          <Showcase />
+        </div>
       </div>
     </div>
   );
