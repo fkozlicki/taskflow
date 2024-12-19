@@ -13,9 +13,11 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import pl.filipkozlicki.taskflow.config.SecurityConfig;
 import pl.filipkozlicki.taskflow.invitation.InvitationService;
 import pl.filipkozlicki.taskflow.project.dto.CreateProjectRequest;
 import pl.filipkozlicki.taskflow.security.JWTService;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProjectController.class)
+@ContextConfiguration(classes = {SecurityConfig.class})
 class ProjectControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -45,13 +48,12 @@ class ProjectControllerTest {
     private InvitationService invitationService;
 
     @MockBean
-    private JWTService jwtService;
+    private UserRepository userRepository;
 
     @MockBean
     private UserDetailsService userDetailsService;
 
-    @MockBean
-    private UserRepository userRepository;
+
 
     @BeforeEach
     public void setup() {

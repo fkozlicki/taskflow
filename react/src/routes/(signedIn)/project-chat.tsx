@@ -90,19 +90,19 @@ export default function ProjectChat() {
         if (!prev) {
           return {
             pages: [{ nextCursor: "", messages: [JSON.parse(message.body)] }],
-            pageParams: [],
+            pageParams: [], // Keeping this as empty if there's no previous data
           };
         }
 
         return {
           pages: [
             {
-              nextCursor: "",
+              nextCursor: prev.pages[0].nextCursor, // Preserve the original cursor if needed
               messages: [JSON.parse(message.body), ...prev.pages[0].messages],
             },
             ...prev.pages.slice(1),
           ],
-          pageParams: [],
+          pageParams: prev.pageParams, // Preserve the previous pageParams
         };
       },
     );
@@ -150,7 +150,7 @@ export default function ProjectChat() {
                   height: `${item.size}px`,
                   transform: `translateY(${item.start}px) scaleY(-1)`,
                 }}
-                className="top-0 left-0 w-full absolute flex items-center"
+                className="top-0 left-0 w-full absolute flex flex-col "
               >
                 {isLoaderRow ? (
                   hasNextPage ? (
@@ -163,10 +163,10 @@ export default function ProjectChat() {
                     className={cn(
                       "bg-secondary rounded-full px-4 flex items-center w-fit h-7 text-sm",
                       message?.sender.id === user?.id &&
-                        "bg-primary text-primary-foreground",
+                        "bg-primary text-primary-foreground self-end",
                     )}
                   >
-                    {message.content} - {item.index}
+                    {message.content}
                   </div>
                 )}
               </div>

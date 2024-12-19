@@ -13,7 +13,7 @@ export default function OAuthLinks() {
         </a>
       </Button>
       <Button className="flex-1" variant="outline" size="lg" asChild>
-        <a href={`${API_URL}/oauth2/authorization/google`}>
+        <a href={`${API_URL}/oauth2/authorization/github`}>
           <icons.Github className="size-4 mr-2" />
           Github
         </a>

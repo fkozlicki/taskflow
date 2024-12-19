@@ -61,7 +61,7 @@ public class ChatService {
     public PageMessage getChatMessages(UUID chatId, LocalDateTime cursor, int limit) {
         Pageable pageable = PageRequest.of(0, limit, Sort.by("sentAt").descending());
         List<Message> messages = messageRepository.findAllByChatIdWithCursor(chatId, cursor, pageable);
-        boolean hasNextPage = messageRepository.existsByChatIdAndSentAtLessThan(chatId, messages.getLast().getSentAt());
+        boolean hasNextPage = !messages.isEmpty() && messageRepository.existsByChatIdAndSentAtLessThan(chatId, messages.getLast().getSentAt());
         LocalDateTime nextCursor = hasNextPage ? messages.getLast().getSentAt() : null;
 
         return new PageMessage(

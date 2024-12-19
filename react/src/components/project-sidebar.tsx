@@ -28,12 +28,12 @@ export default function ProjectSidebar() {
         <Button
           className="justify-start"
           variant={
-            pathname === `/projects/${params.projectId}` ? "default" : "ghost"
+            pathname === `/projects/${params.projectId}` ? "secondary" : "ghost"
           }
           asChild
         >
           <Link to={`/projects/${params.projectId}`}>
-            <HomeIcon className="size-4 mr-2" />
+            <HomeIcon className="size-4" />
             Home
           </Link>
         </Button>
@@ -42,11 +42,11 @@ export default function ProjectSidebar() {
           <Button
             asChild
             key={link.href}
-            variant={pathname.includes(link.href) ? "default" : "ghost"}
+            variant={pathname.includes(link.href) ? "secondary" : "ghost"}
             className="justify-start"
           >
             <Link to={`/projects/${params.projectId}${link.href}`}>
-              <link.Icon className="size-4 mr-2" />
+              <link.Icon className="size-4" />
               {link.label}
             </Link>
           </Button>

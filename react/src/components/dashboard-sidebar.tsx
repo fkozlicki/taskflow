@@ -19,7 +19,7 @@ export default function DashboardSidebar() {
           <Button
             asChild
             key={link.href}
-            variant={pathname.includes(link.href) ? "default" : "ghost"}
+            variant={pathname.includes(link.href) ? "secondary" : "ghost"}
             className="justify-start"
           >
             <Link to={link.href}>

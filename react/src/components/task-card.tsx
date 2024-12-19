@@ -70,11 +70,11 @@ export default function TaskCard({
         >
           <span className="text-xs">Owner: {}</span>
         </CardHeader>
-        <CardContent className="py-2 px-3">
-          <CardTitle
-            onClick={() => setOpen(true)}
-            className="text-sm mb-2 hover:underline cursor-pointer"
-          >
+        <CardContent
+          className="py-2 px-3 group cursor-pointer hover:bg-accent/50"
+          onClick={() => setOpen(true)}
+        >
+          <CardTitle className="text-sm mb-2 group-hover:underline">
             {task.name}
           </CardTitle>
           <div className="flex gap-2 items-center mb-6">
