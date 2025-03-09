@@ -35,11 +35,11 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getAll(@AuthenticationPrincipal User user) {
-        List<ProjectResponse> projects = projectService
+    public ResponseEntity<List<ProjectItemResponse>> getAll(@AuthenticationPrincipal User user) {
+        List<ProjectItemResponse> projects = projectService
                 .getAllByUser(user)
                 .stream()
-                .map(ProjectResponse::new)
+                .map(ProjectItemResponse::new)
                 .toList();
 
         return ResponseEntity.ok(projects);
