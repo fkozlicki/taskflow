@@ -35,4 +35,15 @@ public class MilestoneController {
                 ))
                 .orElseThrow(ResourceNotFoundException::new);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
+        return milestoneService
+                .getById(id)
+                .map(milestone -> {
+                    milestoneService.delete(milestone.getId());
+                    return ResponseEntity.noContent().build();
+                })
+                .orElseThrow(ResourceNotFoundException::new);
+    }
 }

@@ -8,13 +8,30 @@ import Empty from "@/components/empty.tsx";
 import CreateMilestoneSheet from "@/components/create-milestone-sheet.tsx";
 import Milestone from "@/components/milestone.tsx";
 import { useMilestones } from "@/hooks/queries/use-milestones.ts";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useParams } from "react-router-dom";
 
-export default function ProjectMilestones({
-  projectId,
-}: {
-  projectId: string;
-}) {
-  const { data } = useMilestones(projectId);
+export default function ProjectMilestones() {
+  const params = useParams();
+  const projectId = params.projectId!;
+  const { data, isPending } = useMilestones(projectId);
+
+  if (isPending) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Milestones</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <Skeleton className="h-4" />
+            <Skeleton className="h-4" />
+            <Skeleton className="h-4" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

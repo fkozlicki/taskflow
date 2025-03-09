@@ -41,4 +41,8 @@ public class MilestoneService {
         milestone.setDone(request.isDone());
         return milestoneRepository.save(milestone);
     }
+
+    public void delete(UUID id) {
+        milestoneRepository.deleteById(id);
+    }
 }
