@@ -4,6 +4,10 @@ import { api } from "@/lib/api.ts";
 export interface Project {
   id: string;
   name: string;
+  description: string;
+  membersCount: number;
+  tasksCount: number;
+  owner: { id: string; name: string; email: string };
 }
 
 async function getProjects() {

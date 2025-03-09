@@ -35,11 +35,12 @@ export default function TasksBoard() {
     }),
   );
 
-  const { projectId } = useParams();
+  const params = useParams();
+  const projectId = params.projectId!;
 
   const { mutate } = useReorderTask();
 
-  const { data } = useProjectTasks(projectId!);
+  const { data } = useProjectTasks(projectId);
 
   const [tasks, setTasks] = useState<Record<string, Task[]>>({
     todo: [],
@@ -48,13 +49,13 @@ export default function TasksBoard() {
     done: [],
   });
 
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
   useEffect(() => {
     if (data) {
       setTasks(data);
     }
   }, [data]);
-
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const getFromData = (active: Active) => {
     const activeData = active.data.current as SortableData;
@@ -146,7 +147,7 @@ export default function TasksBoard() {
       id: event.active.id as string,
       status: to.containerId,
       position: to.index,
-      projectId: projectId!,
+      projectId: projectId,
     });
   };
 

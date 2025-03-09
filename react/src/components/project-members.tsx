@@ -7,13 +7,35 @@ import {
 } from "@/components/ui/card.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { UserIcon } from "lucide-react";
-import { ProjectDetails } from "@/hooks/queries/use-project.ts";
+import { useProject } from "@/hooks/queries/use-project.ts";
+import { useParams } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 
-export default function ProjectMembers({
-  project,
-}: {
-  project: ProjectDetails;
-}) {
+export default function ProjectMembers() {
+  const params = useParams();
+  const projectId = params.projectId!;
+  const { data: project, isPending, isError } = useProject(projectId);
+
+  if (isPending) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Members</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-8" />
+            <Skeleton className="h-8" />
+            <Skeleton className="h-8" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return <div>Couldn't load project data</div>;
+  }
   const { isOwner, members } = project;
 
   return (

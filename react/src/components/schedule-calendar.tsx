@@ -70,7 +70,7 @@ const ScheduleCalendar = () => {
   const { calendarDays, firstWeek } = useCalendarDates(currentDate, true);
 
   return (
-    <div>
+    <>
       <CalendarDaySheet
         date={selectedDate ?? formatISO(new Date())}
         open={!!selectedDate}
@@ -88,7 +88,7 @@ const ScheduleCalendar = () => {
         calendarDays={calendarDays}
         currentDate={currentDate}
       />
-    </div>
+    </>
   );
 };
 
@@ -154,7 +154,7 @@ function CalendarGrid({
   const { data } = useProjectEvents(projectId);
 
   return (
-    <div className="grid grid-cols-7 gap-px border border-border bg-border rounded-xl overflow-hidden">
+    <div className="grid flex-1 grid-rows-[auto_repeat(6,1fr)] grid-cols-7 gap-px border border-border bg-border rounded-lg overflow-hidden">
       {firstWeek.map((day) => (
         <div
           key={day.toString()}
@@ -192,7 +192,7 @@ function CalendarDay({ date, currentDate, events }: CalendarDayProps) {
   return (
     <div
       className={cn(
-        "aspect-square md:aspect-[3/2] p-2 font-mono text-lg relative transition-all duration-100 text-left flex flex-col select-none group cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950",
+        " p-2 font-mono text-lg relative transition-all duration-100 text-left flex flex-col select-none group cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950",
         isCurrentMonth && isToday(date)
           ? "bg-[#f0f0f0] dark:bg-[#202020]"
           : "bg-background",

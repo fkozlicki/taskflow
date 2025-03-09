@@ -23,7 +23,7 @@ export default function ProjectSidebar() {
 
   return (
     <Sidebar>
-      {data && <ProjectSelect projects={data} />}
+      <ProjectSelect projects={data ?? []} />
       <div className="flex flex-col mt-4 flex-1">
         <Button
           className="justify-start"

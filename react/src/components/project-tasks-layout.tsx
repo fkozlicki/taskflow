@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 
 export default function ProjectTasksLayout() {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-6">
       <ProjectTasksHeader />
       <Outlet />
     </div>

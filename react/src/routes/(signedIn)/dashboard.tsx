@@ -1,5 +1,5 @@
 import { useSession } from "@/hooks/queries/use-session.ts";
-import ProjectsGrid from "@/components/projects-grid.tsx";
+import YourProjects from "@/your-projects.tsx";
 
 export default function Dashboard() {
   const { data: user } = useSession();
@@ -13,7 +13,7 @@ export default function Dashboard() {
         </p>
       </div>
 
-      <ProjectsGrid />
+      <YourProjects />
     </>
   );
 }
