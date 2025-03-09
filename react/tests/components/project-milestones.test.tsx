@@ -7,7 +7,7 @@ import { http, HttpResponse } from "msw";
 
 describe("ProjectMilestones", () => {
   it("Should render list of milestones", async () => {
-    render(<ProjectMilestones projectId="anyId" />, {
+    render(<ProjectMilestones />, {
       wrapper: createWrapper(),
     });
 
@@ -25,7 +25,7 @@ describe("ProjectMilestones", () => {
       }),
     );
 
-    render(<ProjectMilestones projectId="anyId" />, {
+    render(<ProjectMilestones />, {
       wrapper: createWrapper(),
     });
 

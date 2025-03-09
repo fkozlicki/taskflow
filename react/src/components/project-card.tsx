@@ -21,11 +21,11 @@ export default function ProjectCard({ project }: { project: Project }) {
           <CardTitle>{name}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
-        <CardContent className="flex gap-4 items-center">
-          <div className="flex items-center">
-            <UserIcon className="size-4 mr-1" />
-            <span className="text-sm">{owner.name}</span>
-          </div>
+        <CardContent className="flex gap-2 flex-wrap">
+          <Badge variant="secondary" className="rounded-full">
+            <UserIcon className="size-3.5 mr-1" />
+            <span>{owner.name}</span>
+          </Badge>
           <Badge>Members: {membersCount}</Badge>
           <Badge>Tasks: {tasksCount}</Badge>
         </CardContent>
