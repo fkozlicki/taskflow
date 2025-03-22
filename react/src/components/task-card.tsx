@@ -15,7 +15,7 @@ import {
   UserIcon,
   UsersIcon,
 } from "lucide-react";
-import { intervalToDuration } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { useState } from "react";
 import TaskSheet from "@/components/task-sheet.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
@@ -43,10 +43,13 @@ export default function TaskCard({
     transition,
   };
 
-  const { days } = intervalToDuration({
-    start: task.createdAt,
-    end: task.dueDate,
-  });
+  const days = differenceInDays(task.dueDate, task.createdAt);
+
+  const elapsedDays = differenceInDays(new Date(), new Date(task.createdAt));
+
+  const progress = (elapsedDays / days) * 100;
+
+  const actualProgress = progress > 100 ? 100 : progress;
 
   return (
     <>
@@ -103,7 +106,7 @@ export default function TaskCard({
               </div>
               <div className="flex items-center">
                 <LoaderCircleIcon className="size-3.5 mr-1 -rotate-90" />
-                <span className="text-xs">75%</span>
+                <span className="text-xs">{actualProgress.toFixed(0)}%</span>
               </div>
             </div>
 
