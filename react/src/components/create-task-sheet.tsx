@@ -97,6 +97,9 @@ export default function CreateTaskSheet({
       onError() {
         toast.error("Something went wrong. Try again.");
       },
+      onSuccess() {
+        toast.success("Created new task.");
+      },
     });
   }
 
