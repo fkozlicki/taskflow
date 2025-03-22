@@ -1,6 +1,14 @@
 context("Login Test", () => {
   beforeEach(() => {
     cy.visit("http://localhost:5173/sign-in");
+
+    cy.intercept(
+      {
+        method: "POST",
+        url: "/api/auth/login",
+      },
+      { fixture: "user.json" },
+    );
   });
 
   it("Should render Sign in Form", () => {
@@ -27,6 +35,14 @@ context("Login Test", () => {
     cy.get('input[type="email"]').type("johndoe@gmail.com");
     cy.get('input[type="password"]').type("secret");
     cy.get('button[type="submit"]').click();
+
+    cy.intercept(
+      {
+        method: "GET",
+        url: "/api/auth/session",
+      },
+      { fixture: "user.json" },
+    );
 
     cy.location("pathname").should("eq", "/dashboard");
   });

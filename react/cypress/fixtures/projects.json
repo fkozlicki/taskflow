@@ -1,0 +1,26 @@
+[
+  {
+    "id": "8e053a67-68f8-4966-a1d5-b78c8328a083",
+    "name": "Taskflow",
+    "description": "Modern & minimalistic kanban app for your project",
+    "membersCount": 4,
+    "tasksCount": 7,
+    "owner": {
+      "id": "43338498-55a4-432d-b4ab-06595c907582",
+      "name": "Filip Koźlicki",
+      "email": "filip.kozlickii@gmail.com"
+    }
+  },
+  {
+    "id": "8e053a67-68f8-4966-a1d5-b78c8328a083",
+    "name": "CodeCareers",
+    "description": "Job search platform focusing on IT and tech jobs built with Express + React",
+    "membersCount": 3,
+    "tasksCount": 12,
+    "owner": {
+      "id": "43338498-55a4-432d-b4ab-06595c907582",
+      "name": "Filip Koźlicki",
+      "email": "filip.kozlickii@gmail.com"
+    }
+  }
+]

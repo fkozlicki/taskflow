@@ -1,0 +1,36 @@
+{
+  "id": "8e053a67-68f8-4966-a1d5-b78c8328a083",
+  "name": "Taskflow",
+  "members": [
+    {
+      "id": "43338498-55a4-432d-b4ab-06595c907582",
+      "name": "Filip Koźlicki",
+      "email": "filip.kozlickii@gmail.com"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "88a01fda-0281-4770-a454-9055ca2b6533",
+      "content": "asdasdasd",
+      "done": true
+    },
+    {
+      "id": "45e64bb5-67bc-4301-8a30-7ffd69e98134",
+      "content": "asdasdasd",
+      "done": false
+    },
+    {
+      "id": "b3a81986-48e8-432c-a672-4d4b03a9761e",
+      "content": "test milestone",
+      "done": false
+    },
+    {
+      "id": "4bfdb1b0-8fe8-4e5b-bb02-6ad04a21fb2d",
+      "content": "tesst123123123",
+      "done": true
+    }
+  ],
+  "description": "Modern & minimalistic kanban app for your project",
+  "invitationCode": "sw1fzqkZ",
+  "isOwner": true
+}

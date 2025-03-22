@@ -13,7 +13,7 @@ export default function ProjectsGrid() {
   if (isError) return <div>Couldn't load your projects</div>;
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div id="projects-grid" className="grid grid-cols-4 gap-4">
       {data.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}
@@ -23,7 +23,7 @@ export default function ProjectsGrid() {
 
 function ProjectsGridSkeleton() {
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div id="projects-grid-skeleton" className="grid grid-cols-4 gap-4">
       {Array.from({ length: 3 }).map((_, i) => (
         <Card key={i}>
           <CardHeader>
