@@ -1,5 +1,5 @@
 import { useSession } from "@/hooks/queries/use-session.ts";
-import YourProjects from "@/your-projects.tsx";
+import YourProjects from "@/components/your-projects.tsx";
 
 export default function Dashboard() {
   const { data: user } = useSession();
