@@ -1,5 +1,4 @@
-![taskflow](https://github.com/user-attachments/assets/b812caed-2e19-4f8f-bf76-144ec4cbceda)
-
+![Screenshot from 2025-03-22 18-21-35](https://github.com/user-attachments/assets/69a556f2-7ea9-477b-8b48-f3a33b0eab95)
 <p align="center">
 	<h1 align="center"><b>Taskflow</b></h1>
 
